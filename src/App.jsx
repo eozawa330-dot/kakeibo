@@ -1341,8 +1341,10 @@ function InputTab({ categories, onAdd }) {
     const allIncomeCats = categories.income;
     const catDef = allIncomeCats.find(ct=>ct.id===selectedCat.id);
     const isSubtract = catDef?.subtractFromIncome === true;
-    const finalAmount = isSubtract ? -Math.abs(amount) : amount;
-    const newRecord = { id:"r"+Date.now(), type:mode==="income"?"income":expenseType, categoryId:selectedCat.id, amount:finalAmount, date, memo };
+    // 控除・ふるさと納税は支出として記録（支出合計に加算）
+    const recordType = isSubtract ? "variable" : mode==="income" ? "income" : expenseType;
+    const finalAmount = Math.abs(amount); // 常に正の値で保存
+    const newRecord = { id:"r"+Date.now(), type:recordType, categoryId:selectedCat.id, amount:finalAmount, date, memo };
     onAdd(newRecord);
     setReceipt({ record:newRecord, catName:selectedCat.name, catIcon:selectedCat.icon||"star" });
     setStep("category"); setSelectedCat(null); setMemo("");

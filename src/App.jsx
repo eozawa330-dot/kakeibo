@@ -797,46 +797,51 @@ const CAT_EN = {
   "交通費":"TRANSPORT","医療費":"MEDICAL","カーシェア":"CAR SHARE",
   "美容":"BEAUTY","趣味":"HOBBIES",
 };
-// ─── Category English Names (for receipt) ────────────────────────────────────
-const CAT_EN = {
-  "給与":"SALARY","賞与":"BONUS","控除":"DEDUCTION","ふるさと納税":"HOMETOWN TAX",
-  "家賃":"RENT","電気":"ELECTRICITY","ガス":"GAS","水道":"WATER",
-  "携帯":"MOBILE","Wi-Fi":"WI-FI","NISA":"NISA INVESTMENT","サブスク":"SUBSCRIPTION",
-  "年金":"PENSION","健康保険":"HEALTH INS.",
-  "食費":"FOOD EXPENSES","外食":"DINING OUT","日用品":"DAILY GOODS","衣服":"CLOTHING",
-  "交通費":"TRANSPORT","医療費":"MEDICAL","カーシェア":"CAR SHARE",
-  "美容":"BEAUTY","趣味":"HOBBIES",
-};
 const getCatEn = name => CAT_EN[name] || name.toUpperCase();
 
-// ─── Landscape photos (Unsplash static URLs) ──────────────────────────────────
-// 環境判定: Vercel本番 → Unsplash実写、それ以外 → CSSグラデーション
-const IS_PROD = typeof window !== "undefined" &&
-  (window.location.hostname.includes("vercel.app") ||
-   window.location.hostname.includes("kakeibo") ||
-   (!window.location.hostname.includes("localhost") && window.location.hostname !== ""));
-
-const LANDSCAPES_PHOTO = [
-  "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80", // mountain lake
-  "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80", // beach sunset
-  "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=80", // aerial forest
-  "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80", // mountain fog
-  "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&q=80", // misty valley
-  "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80", // stars mountain
-  "https://images.unsplash.com/photo-1490682143684-14369e18dce8?w=800&q=80", // calm ocean
-  "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&q=80", // lavender field
+// ─── Receipt background gradients ───────────────────────────────────────────
+// カテゴリ別レシート背景グラデーション
+const RECEIPT_BG = {
+  // 収入系 — 豊かさ・温かみ
+  "給与":         "linear-gradient(145deg, #1a1a2e 0%, #2d4a7a 40%, #4a7a9b 70%, #7fb3c8 100%)",
+  "賞与":         "linear-gradient(145deg, #2C1654 0%, #7b2d8b 40%, #c56cd6 70%, #f9d4f0 100%)",
+  "控除":         "linear-gradient(145deg, #2d2d2d 0%, #4a4a4a 40%, #757575 70%, #bdbdbd 100%)",
+  "ふるさと納税": "linear-gradient(145deg, #1b4332 0%, #2d6a4f 40%, #52b788 70%, #b7e4c7 100%)",
+  // 固定費 — 生活インフラ感
+  "家賃":         "linear-gradient(145deg, #1a0a2e 0%, #3d1a6e 40%, #7952a0 70%, #c4a0d4 100%)",
+  "電気":         "linear-gradient(145deg, #1a1500 0%, #4a3c00 40%, #a08600 70%, #f0d060 100%)",
+  "ガス":         "linear-gradient(145deg, #2d0a0a 0%, #7a1a1a 40%, #c04040 70%, #f08080 100%)",
+  "水道":         "linear-gradient(145deg, #001a33 0%, #003d6b 40%, #0077b6 70%, #90e0ef 100%)",
+  "携帯":         "linear-gradient(145deg, #0d0d1a 0%, #1a2040 40%, #2d4080 70%, #6080c0 100%)",
+  "Wi-Fi":        "linear-gradient(145deg, #001233 0%, #023e8a 40%, #0096c7 70%, #90e0ef 100%)",
+  "NISA":         "linear-gradient(145deg, #0a2000 0%, #1a4a0a 40%, #2d8020 70%, #70c040 100%)",
+  "サブスク":     "linear-gradient(145deg, #1a0030 0%, #4a0080 40%, #8000c0 70%, #c060f0 100%)",
+  "年金":         "linear-gradient(145deg, #1a1000 0%, #4a3000 40%, #906000 70%, #d4a020 100%)",
+  "健康保険":     "linear-gradient(145deg, #001a0d 0%, #004d29 40%, #00916a 70%, #40c9a2 100%)",
+  // 変動費 — 日常生活の色彩
+  "食費":         "linear-gradient(145deg, #2d1500 0%, #7a3500 40%, #c06020 70%, #e8a060 100%)",
+  "外食":         "linear-gradient(145deg, #1a0505 0%, #5a1010 40%, #a03030 70%, #d07060 100%)",
+  "日用品":       "linear-gradient(145deg, #1a1500 0%, #403800 40%, #706400 70%, #b0a050 100%)",
+  "衣服":         "linear-gradient(145deg, #200a20 0%, #5a1a5a 40%, #a03090 70%, #d880c0 100%)",
+  "交通費":       "linear-gradient(145deg, #001020 0%, #002a50 40%, #004a90 70%, #4080d0 100%)",
+  "医療費":       "linear-gradient(145deg, #001a10 0%, #003d26 40%, #007050 70%, #40b090 100%)",
+  "カーシェア":   "linear-gradient(145deg, #001520 0%, #003040 40%, #005570 70%, #3090b0 100%)",
+  "美容":         "linear-gradient(145deg, #2d0015 0%, #7a003a 40%, #c02060 70%, #f080a0 100%)",
+  "趣味":         "linear-gradient(145deg, #0a200a 0%, #1e4d1e 40%, #3a8a3a 70%, #70c070 100%)",
+};
+// デフォルト（未登録カテゴリ用）
+const LANDSCAPES = [
+  "linear-gradient(145deg, #0f0c29 0%, #302b63 40%, #24243e 100%)",
+  "linear-gradient(145deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%)",
+  "linear-gradient(145deg, #2c1654 0%, #4a0e8f 40%, #7b2d8b 100%)",
+  "linear-gradient(145deg, #0d1b2a 0%, #1b2a4a 40%, #2a3f6f 100%)",
+  "linear-gradient(145deg, #1a0a2e 0%, #2d1a5e 40%, #4a2d8e 100%)",
+  "linear-gradient(145deg, #0a1628 0%, #142744 40%, #1e3860 100%)",
+  "linear-gradient(145deg, #1e1428 0%, #352244 40%, #4c3060 100%)",
+  "linear-gradient(145deg, #0f1923 0%, #1a2e3d 40%, #254457 100%)",
 ];
-const LANDSCAPES_GRAD = [
-  "linear-gradient(160deg, #1a1a2e 0%, #16213e 30%, #2d6a9f 55%, #4fc3f7 75%, #b3e5fc 90%, #e1f5fe 100%)",
-  "linear-gradient(170deg, #ff9a9e 0%, #fad0c4 25%, #ffecd2 45%, #a1c4fd 70%, #c2e9fb 100%)",
-  "linear-gradient(150deg, #134e5e 0%, #2e8b57 30%, #71b07e 55%, #a8d8a8 75%, #d4edda 100%)",
-  "linear-gradient(165deg, #2c3e50 0%, #3498db 35%, #85c1e9 60%, #d6eaf8 80%, #f0f4f8 100%)",
-  "linear-gradient(155deg, #2d1b69 0%, #7b2d8b 25%, #c56cd6 50%, #e8b4e8 70%, #fce4ec 100%)",
-  "linear-gradient(170deg, #0a0a1a 0%, #1a1a3e 25%, #2d2d6e 45%, #4a4a9e 65%, #8585c8 85%, #b0b0e0 100%)",
-  "linear-gradient(160deg, #006994 0%, #0099cc 28%, #33b5e5 50%, #7fd8e8 70%, #b2ebf2 88%, #e0f7fa 100%)",
-  "linear-gradient(165deg, #e65c00 0%, #f9d423 25%, #f7971e 45%, #ffd200 65%, #fff176 80%, #fffff0 100%)",
-];
-const LANDSCAPES = IS_PROD ? LANDSCAPES_PHOTO : LANDSCAPES_GRAD;
+// カテゴリ名からグラデーションを取得
+const getReceiptBg = (name) => RECEIPT_BG[name] || LANDSCAPES[Math.floor(Math.random()*LANDSCAPES.length)];
 
 // ─── Icon Picker ────────────────────────────────────────────────────────────
 const ICON_LABELS = { coin:"コイン", house:"家", phone:"スマホ", food:"食事", star:"スター", wallet:"財布", pencil:"鉛筆", chart:"グラフ", list:"リスト", gear:"歯車", car:"車", heart:"ハート", book:"本", plane:"旅行", shop:"買物", music:"音楽", gym:"ジム", pet:"ペット", beauty:"美容", gift:"ギフト", water:"水道", electric:"電気", gas:"ガス", subscription:"サブスク", carshare:"カーシェア", hobby:"趣味", cafe:"カフェ", baby:"育児", medicine:"医薬", camera:"カメラ", diamond:"ジュエリー", fire:"ガス", flower:"花", rice:"食材", sake:"お酒", sports:"スポーツ", train:"電車", umbrella:"保険", yoga:"ヨガ", wifi:"Wi-Fi", hospital:"病院", nisa:"NISA", fork:"食費", basket:"日用品", medal:"賞与", memo:"控除", tshirt:"衣服", herb:"趣味" };
@@ -1170,7 +1175,7 @@ function Splash({ onDone }) {
 
 // ─── Receipt Modal ────────────────────────────────────────────────────────────
 function ReceiptModal({ record, catName, catIcon, onClose }) {
-  const [bgIdx] = useState(()=>Math.floor(Math.random()*LANDSCAPES.length));
+  const bg = getReceiptBg(catName);
   const [visible, setVisible] = useState(false);
   useEffect(()=>{ setTimeout(()=>setVisible(true),30); },[]);
 
@@ -1210,13 +1215,10 @@ function ReceiptModal({ record, catName, catIcon, onClose }) {
         transition:"transform 0.45s cubic-bezier(0.34,1.56,0.64,1)",
         boxShadow:"0 32px 80px rgba(0,0,0,0.45), 0 2px 8px rgba(255,255,255,0.1)",
       }}>
-        {/* Background landscape */}
+        {/* Background gradient */}
         <div style={{
           position:"absolute", inset:0,
-          ...(IS_PROD
-            ? { backgroundImage:`url(${LANDSCAPES[bgIdx]})`, backgroundSize:"cover", backgroundPosition:"center", filter:"brightness(0.82) saturate(1.1)" }
-            : { background:LANDSCAPES[bgIdx] }
-          ),
+          background:bg,
         }}/>
         {/* Glass overlay */}
         <div style={{

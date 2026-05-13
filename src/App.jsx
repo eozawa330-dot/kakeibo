@@ -967,8 +967,8 @@ function Calculator({ onConfirm }) {
   });
   const keys = [["7","8","9"],["4","5","6"],["1","2","3"],["AC","0","⌫"]];
   return (
-    <div style={{ display:"flex", flexDirection:"column", gap:7 }}>
-      <div style={{ ...neuInset(6), borderRadius:16, padding:"12px 18px", textAlign:"right", marginBottom:6, border:"1px solid rgba(255,255,255,0.35)" }}>
+    <div style={{ display:"flex", flexDirection:"column", gap:5 }}>
+      <div style={{ ...neuInset(6), borderRadius:14, padding:"8px 16px", textAlign:"right", marginBottom:0, border:"1px solid rgba(255,255,255,0.35)" }}>
         <div style={{ fontSize:10, color:GRAY, fontWeight:700, letterSpacing:"1.5px", marginBottom:2 }}>金額</div>
         <div style={{ fontSize:32, fontWeight:900, color:DARK, letterSpacing:"-1px", fontVariantNumeric:"tabular-nums" }}>
           {parseFloat(display||"0").toLocaleString()}
@@ -1349,7 +1349,7 @@ function InputTab({ categories, onAdd }) {
   };
 
   return (
-    <div style={{ paddingBottom:90 }}>
+    <div style={{ paddingBottom:120 }}>
       {receipt && (
         <ReceiptModal
           record={receipt.record}
@@ -1388,8 +1388,8 @@ function InputTab({ categories, onAdd }) {
         </>
       ) : (
         <>
-          <button onClick={()=>setStep("category")} style={{ background:"none", border:"none", color:GRAY, fontSize:13, cursor:"pointer", marginBottom:10, padding:0, fontWeight:600, fontFamily:FONT }}>← 戻る</button>
-          <div style={{ ...neuCard, padding:"10px 16px", marginBottom:10, display:"flex", alignItems:"center", gap:12, borderRadius:18 }}>
+          <button onClick={()=>setStep("category")} style={{ background:"none", border:"none", color:GRAY, fontSize:13, cursor:"pointer", marginBottom:6, padding:0, fontWeight:600, fontFamily:FONT }}>← 戻る</button>
+          <div style={{ ...neuCard, padding:"8px 14px", marginBottom:6, display:"flex", alignItems:"center", gap:12, borderRadius:16 }}>
             <div style={{ width:44, height:44, borderRadius:14, background:selectedCat.color+"1A", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:`3px 3px 8px rgba(163,177,198,0.4),-3px -3px 8px rgba(255,255,255,0.9)` }}>
               <Icon3D type={selectedCat.icon||"star"} size={30}/>
             </div>
@@ -1398,7 +1398,7 @@ function InputTab({ categories, onAdd }) {
               <div style={{ fontSize:16, fontWeight:800, color:DARK }}>{selectedCat.name}</div>
             </div>
           </div>
-          <div style={{ ...neuInset(4), borderRadius:12, padding:"1px 4px", marginBottom:8 }}>
+          <div style={{ ...neuInset(4), borderRadius:12, padding:"1px 4px", marginBottom:4 }}>
             <input placeholder="メモ（任意）" value={memo} onChange={e=>setMemo(e.target.value)} style={{ width:"100%", padding:"8px 12px", background:"none", border:"none", outline:"none", fontSize:13, color:DARK, fontFamily:FONT, boxSizing:"border-box" }}/>
           </div>
           <Calculator onConfirm={handleConfirm}/>

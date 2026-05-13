@@ -795,7 +795,7 @@ const CAT_EN = {
   "年金":"PENSION","健康保険":"HEALTH INS.",
   "食費":"FOOD EXPENSES","外食":"DINING OUT","日用品":"DAILY GOODS","衣服":"CLOTHING",
   "交通費":"TRANSPORT","医療費":"MEDICAL","カーシェア":"CAR SHARE",
-  "美容":"BEAUTY","趣味":"HOBBIES",
+  "美容":"BEAUTY","趣味":"HOBBIES","ささみ":"Amōre!",
 };
 const getCatEn = name => CAT_EN[name] || name.toUpperCase();
 
@@ -896,6 +896,7 @@ const DEFAULT_CATEGORIES = {
     { id:"var_7", name:"カーシェア",icon:"carshare",color:"#2DD4BF" },
     { id:"var_8", name:"美容",     icon:"beauty",   color:"#E879A0" },
     { id:"var_9", name:"趣味",     icon:"herb",     color:"#6EE7B7" },
+    { id:"var_10",name:"ささみ",   icon:"heart",    color:"#FCA5A5" },
   ],
 };
 
@@ -966,10 +967,10 @@ function Calculator({ onConfirm }) {
   });
   const keys = [["7","8","9"],["4","5","6"],["1","2","3"],["AC","0","⌫"]];
   return (
-    <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
-      <div style={{ ...neuInset(8), borderRadius:20, padding:"20px 24px", textAlign:"right", marginBottom:4, border:"1px solid rgba(255,255,255,0.35)" }}>
-        <div style={{ fontSize:11, color:GRAY, fontWeight:700, letterSpacing:"1.5px", marginBottom:4 }}>金額</div>
-        <div style={{ fontSize:40, fontWeight:900, color:DARK, letterSpacing:"-1px", fontVariantNumeric:"tabular-nums" }}>
+    <div style={{ display:"flex", flexDirection:"column", gap:7 }}>
+      <div style={{ ...neuInset(6), borderRadius:16, padding:"12px 18px", textAlign:"right", marginBottom:6, border:"1px solid rgba(255,255,255,0.35)" }}>
+        <div style={{ fontSize:10, color:GRAY, fontWeight:700, letterSpacing:"1.5px", marginBottom:2 }}>金額</div>
+        <div style={{ fontSize:32, fontWeight:900, color:DARK, letterSpacing:"-1px", fontVariantNumeric:"tabular-nums" }}>
           {parseFloat(display||"0").toLocaleString()}
           <span style={{ fontSize:20, color:TEAL2, marginLeft:4, fontWeight:700 }}>円</span>
         </div>
@@ -983,7 +984,7 @@ function Calculator({ onConfirm }) {
               onMouseUp={e=>{e.currentTarget.style.boxShadow=neuShadow(5);e.currentTarget.style.transform="scale(1)";}}
               onMouseLeave={e=>{e.currentTarget.style.boxShadow=neuShadow(5);e.currentTarget.style.transform="scale(1)";}}
               onClick={()=>press(k)}
-              style={{ background:"rgba(255,255,255,0.18)", backdropFilter:"blur(10px)", WebkitBackdropFilter:"blur(10px)", border:"1px solid rgba(255,255,255,0.38)", borderRadius:15, padding:"18px 0", fontSize:20, fontWeight:600, fontFamily:FONT, color:isAC?PINK:isDel?TEAL2:DARK, cursor:"pointer", boxShadow:"0 4px 12px rgba(80,40,160,0.12)", transition:"all 0.1s ease" }}
+              style={{ background:"rgba(255,255,255,0.18)", backdropFilter:"blur(10px)", WebkitBackdropFilter:"blur(10px)", border:"1px solid rgba(255,255,255,0.38)", borderRadius:13, padding:"13px 0", fontSize:19, fontWeight:600, fontFamily:FONT, color:isAC?PINK:isDel?TEAL2:DARK, cursor:"pointer", boxShadow:"0 4px 12px rgba(80,40,160,0.12)", transition:"all 0.1s ease" }}
             >{k}</button>
           );
         })}
@@ -992,7 +993,7 @@ function Calculator({ onConfirm }) {
         onMouseDown={e=>{e.currentTarget.style.transform="scale(0.97)";e.currentTarget.style.boxShadow=`inset 2px 2px 8px rgba(0,0,0,0.2), 0 0 14px ${TEAL_GLOW}`;}}
         onMouseUp={e=>{e.currentTarget.style.transform="scale(1)";e.currentTarget.style.boxShadow=ACCENT_SHADOW;}}
         onClick={()=>{ const v=parseFloat(display); if(v>0)onConfirm(v); }}
-        style={{ background:NOISE_GRAD, border:"1px solid rgba(255,255,255,0.8)", borderRadius:18, padding:"18px", fontSize:16, fontWeight:800, fontFamily:FONT, color:DARKER, cursor:"pointer", marginTop:4, letterSpacing:"0.5px", boxShadow:NOISE_SHADOW, transition:"all 0.12s ease" }}
+        style={{ background:NOISE_GRAD, border:"1px solid rgba(255,255,255,0.8)", borderRadius:14, padding:"13px", fontSize:15, fontWeight:800, fontFamily:FONT, color:DARKER, cursor:"pointer", marginTop:4, letterSpacing:"0.5px", boxShadow:NOISE_SHADOW, transition:"all 0.12s ease" }}
       >登録する ✓</button>
     </div>
   );
@@ -1336,15 +1337,19 @@ function InputTab({ categories, onAdd }) {
   const handleConfirm = amount => {
     const today=new Date();
     const date=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
-    const newRecord = { id:"r"+Date.now(), type:mode==="income"?"income":expenseType, categoryId:selectedCat.id, amount, date, memo };
+    // 控除・ふるさと納税はsubtractFromIncome=trueなのでマイナス金額で保存
+    const allIncomeCats = categories.income;
+    const catDef = allIncomeCats.find(ct=>ct.id===selectedCat.id);
+    const isSubtract = catDef?.subtractFromIncome === true;
+    const finalAmount = isSubtract ? -Math.abs(amount) : amount;
+    const newRecord = { id:"r"+Date.now(), type:mode==="income"?"income":expenseType, categoryId:selectedCat.id, amount:finalAmount, date, memo };
     onAdd(newRecord);
-    // Show receipt modal instead of toast
     setReceipt({ record:newRecord, catName:selectedCat.name, catIcon:selectedCat.icon||"star" });
     setStep("category"); setSelectedCat(null); setMemo("");
   };
 
   return (
-    <div style={{ paddingBottom:110 }}>
+    <div style={{ paddingBottom:90 }}>
       {receipt && (
         <ReceiptModal
           record={receipt.record}
@@ -1383,18 +1388,18 @@ function InputTab({ categories, onAdd }) {
         </>
       ) : (
         <>
-          <button onClick={()=>setStep("category")} style={{ background:"none", border:"none", color:GRAY, fontSize:14, cursor:"pointer", marginBottom:16, padding:0, fontWeight:600, fontFamily:FONT }}>← 戻る</button>
-          <div style={{ ...neuCard, padding:"16px 20px", marginBottom:16, display:"flex", alignItems:"center", gap:14, borderRadius:22 }}>
-            <div style={{ width:58, height:58, borderRadius:18, background:selectedCat.color+"1A", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:`4px 4px 10px rgba(163,177,198,0.42),-4px -4px 10px rgba(255,255,255,0.9)` }}>
-              <Icon3D type={selectedCat.icon||"star"} size={40}/>
+          <button onClick={()=>setStep("category")} style={{ background:"none", border:"none", color:GRAY, fontSize:13, cursor:"pointer", marginBottom:10, padding:0, fontWeight:600, fontFamily:FONT }}>← 戻る</button>
+          <div style={{ ...neuCard, padding:"10px 16px", marginBottom:10, display:"flex", alignItems:"center", gap:12, borderRadius:18 }}>
+            <div style={{ width:44, height:44, borderRadius:14, background:selectedCat.color+"1A", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:`3px 3px 8px rgba(163,177,198,0.4),-3px -3px 8px rgba(255,255,255,0.9)` }}>
+              <Icon3D type={selectedCat.icon||"star"} size={30}/>
             </div>
             <div>
-              <div style={{ fontSize:10, color:GRAY, fontWeight:700, letterSpacing:"1px" }}>{mode==="income"?"収入":expenseType==="fixed"?"固定費":"変動費"}</div>
-              <div style={{ fontSize:19, fontWeight:800, color:DARK }}>{selectedCat.name}</div>
+              <div style={{ fontSize:9, color:GRAY, fontWeight:700, letterSpacing:"1px" }}>{mode==="income"?"収入":expenseType==="fixed"?"固定費":"変動費"}</div>
+              <div style={{ fontSize:16, fontWeight:800, color:DARK }}>{selectedCat.name}</div>
             </div>
           </div>
-          <div style={{ ...neuInset(5), borderRadius:14, padding:"2px 4px", marginBottom:14 }}>
-            <input placeholder="メモ（任意）" value={memo} onChange={e=>setMemo(e.target.value)} style={{ width:"100%", padding:"12px 14px", background:"none", border:"none", outline:"none", fontSize:14, color:DARK, fontFamily:FONT, boxSizing:"border-box" }}/>
+          <div style={{ ...neuInset(4), borderRadius:12, padding:"1px 4px", marginBottom:8 }}>
+            <input placeholder="メモ（任意）" value={memo} onChange={e=>setMemo(e.target.value)} style={{ width:"100%", padding:"8px 12px", background:"none", border:"none", outline:"none", fontSize:13, color:DARK, fontFamily:FONT, boxSizing:"border-box" }}/>
           </div>
           <Calculator onConfirm={handleConfirm}/>
         </>
@@ -1405,6 +1410,9 @@ function InputTab({ categories, onAdd }) {
 
 // ─── Report Tab ─────────────────────────────────────────────────────────────
 function ReportTab({ records, categories, monthKey, onMonthChange }) {
+  const [selectedDay, setSelectedDay] = useState(null);
+  const [reportView, setReportView]   = useState("overview"); // overview | calendar | weekly
+
   const allCats = [...categories.income, ...categories.fixed, ...categories.variable];
   const getCat  = id => allCats.find(c => c.id === id) || { name:"不明", icon:"star", color:"#94A3B8" };
 
@@ -1432,6 +1440,52 @@ function ReportTab({ records, categories, monthKey, onMonthChange }) {
     const exp  = recs.filter(r => r.type!=="income").reduce((s,r)=>s+r.amount,0);
     const [,m] = mk.split("-");
     lineData.push({ month:parseInt(m)+"月", income:inc, expense:exp });
+  }
+
+  // ── カレンダー用データ ──────────────────────────────────────────────────
+  const [year, month] = monthKey.split("-").map(Number);
+  const daysInMonth   = new Date(year, month, 0).getDate();
+  const firstDow      = new Date(year, month-1, 1).getDay(); // 0=Sun
+
+  // 日別支出合計
+  const dayExpMap = {};
+  monthRecs.filter(r=>r.type!=="income").forEach(r=>{
+    const d = parseInt(r.date.split("-")[2]);
+    dayExpMap[d] = (dayExpMap[d]||0) + r.amount;
+  });
+  const dayIncMap = {};
+  monthRecs.filter(r=>r.type==="income").forEach(r=>{
+    const d = parseInt(r.date.split("-")[2]);
+    dayIncMap[d] = (dayIncMap[d]||0) + r.amount;
+  });
+  const maxDayExp = Math.max(...Object.values(dayExpMap), 1);
+
+  // 選択日のレコード
+  const selectedDayRecs = selectedDay
+    ? monthRecs.filter(r => parseInt(r.date.split("-")[2]) === selectedDay)
+    : [];
+
+  // ── 週次データ ──────────────────────────────────────────────────────────
+  const weeks = [];
+  let weekStart = 1;
+  let weekNum = 1;
+  while (weekStart <= daysInMonth) {
+    const weekEnd = Math.min(weekStart + 6, daysInMonth);
+    const recs = monthRecs.filter(r => {
+      const d = parseInt(r.date.split("-")[2]);
+      return d >= weekStart && d <= weekEnd;
+    });
+    const wInc = recs.filter(r=>r.type==="income").reduce((s,r)=>s+r.amount,0);
+    const wExp = recs.filter(r=>r.type!=="income").reduce((s,r)=>s+r.amount,0);
+    // カテゴリ別集計
+    const wCatMap = {};
+    recs.filter(r=>r.type!=="income").forEach(r=>{
+      wCatMap[r.categoryId]=(wCatMap[r.categoryId]||0)+r.amount;
+    });
+    const wCats = Object.entries(wCatMap).map(([id,amt])=>({...getCat(id),amount:amt})).sort((a,b)=>b.amount-a.amount).slice(0,3);
+    weeks.push({ num:weekNum, start:weekStart, end:weekEnd, income:wInc, expense:wExp, cats:wCats });
+    weekStart += 7;
+    weekNum++;
   }
 
   const srColor = savingRate >= 20 ? "#059669" : savingRate >= 10 ? TEAL2 : savingRate >= 0 ? "#F59E0B" : PINK;
@@ -1651,7 +1705,7 @@ function ReportTab({ records, categories, monthKey, onMonthChange }) {
       )}
 
       {/* ── 月別推移 Card ── */}
-      <div style={{ ...neuCard, padding:"22px 20px 18px" }}>
+      <div style={{ ...neuCard, padding:"22px 20px 18px", marginBottom:16 }}>
         <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:18 }}>
           <div>
             <div style={{ fontSize:14, fontWeight:800, color:DARKER, letterSpacing:"-0.2px" }}>月別推移</div>
@@ -1702,6 +1756,159 @@ function ReportTab({ records, categories, monthKey, onMonthChange }) {
             />
           </LineChart>
         </ResponsiveContainer>
+      </div>
+
+      {/* ── カレンダー Card ── */}
+      <div style={{ ...neuCard, padding:"22px 20px 18px", marginBottom:16 }}>
+        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:16 }}>
+          <div>
+            <div style={{ fontSize:14, fontWeight:800, color:DARKER, letterSpacing:"-0.2px" }}>カレンダー</div>
+            <div style={{ fontSize:10, color:GRAY, fontWeight:600, letterSpacing:"0.5px", marginTop:2 }}>DAILY VIEW</div>
+          </div>
+          {selectedDay && (
+            <button onClick={()=>setSelectedDay(null)} style={{ background:"none", border:"none", color:GRAY, cursor:"pointer", fontSize:12, fontFamily:FONT }}>× 閉じる</button>
+          )}
+        </div>
+        {/* 曜日ヘッダー */}
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", marginBottom:6 }}>
+          {["日","月","火","水","木","金","土"].map((d,i)=>(
+            <div key={d} style={{ textAlign:"center", fontSize:10, fontWeight:700, color:i===0?"#E879A0":i===6?"#3B82F6":GRAY, paddingBottom:4 }}>{d}</div>
+          ))}
+        </div>
+        {/* カレンダーグリッド */}
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", gap:3 }}>
+          {/* 空白セル */}
+          {Array.from({length:firstDow}).map((_,i)=>(
+            <div key={"empty"+i}/>
+          ))}
+          {/* 日付セル */}
+          {Array.from({length:daysInMonth}).map((_,i)=>{
+            const day = i+1;
+            const exp = dayExpMap[day]||0;
+            const inc = dayIncMap[day]||0;
+            const hasData = exp>0||inc>0;
+            const isSelected = selectedDay===day;
+            const intensity = exp>0 ? Math.min(exp/maxDayExp,1) : 0;
+            const dow = (firstDow+i)%7;
+            return (
+              <button key={day} onClick={()=>setSelectedDay(isSelected?null:day)} style={{
+                aspectRatio:"1", borderRadius:10, border:"none", cursor:hasData?"pointer":"default",
+                background: isSelected
+                  ? `linear-gradient(135deg,${TEAL}44,${PINK}33)`
+                  : hasData ? `rgba(232,121,160,${0.08+intensity*0.22})` : "transparent",
+                display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
+                boxShadow: isSelected ? neuShadow(3) : "none",
+                transition:"all 0.15s ease", padding:"2px 0",
+              }}>
+                <div style={{
+                  fontSize:11, fontWeight: isSelected?800:hasData?700:500,
+                  color: isSelected?PINK : dow===0?"#E879A0":dow===6?"#3B82F6":DARK,
+                  lineHeight:1.2,
+                }}>{day}</div>
+                {exp>0 && (
+                  <div style={{ fontSize:8, color:PINK, fontWeight:700, letterSpacing:"-0.3px" }}>
+                    {exp>=10000?`${Math.round(exp/1000)}k`:exp>=1000?`${Math.round(exp/100)/10}k`:exp}
+                  </div>
+                )}
+                {inc>0 && (
+                  <div style={{ width:4, height:4, borderRadius:99, background:"#059669", marginTop:1 }}/>
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* 選択日の内訳 */}
+        {selectedDay && selectedDayRecs.length > 0 && (
+          <div style={{ marginTop:16, borderTop:"1px solid rgba(200,210,230,0.4)", paddingTop:14 }}>
+            <div style={{ fontSize:11, fontWeight:700, color:DARK, marginBottom:10, letterSpacing:"0.5px" }}>
+              {month}月{selectedDay}日の内訳
+            </div>
+            <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+              {selectedDayRecs.map(r=>{
+                const cat=getCat(r.categoryId);
+                const isInc=r.type==="income";
+                return (
+                  <div key={r.id} style={{ display:"flex", alignItems:"center", gap:10 }}>
+                    <div style={{ width:32, height:32, borderRadius:10, background:cat.color+"18", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                      <Icon3D type={cat.icon||"star"} size={20}/>
+                    </div>
+                    <div style={{ flex:1 }}>
+                      <div style={{ fontSize:12, fontWeight:700, color:DARKER }}>{cat.name}</div>
+                      {r.memo && <div style={{ fontSize:10, color:GRAY }}>{r.memo}</div>}
+                    </div>
+                    <div style={{ fontSize:13, fontWeight:800, color:isInc?"#059669":PINK }}>
+                      {isInc?"+":"−"}{fmt(Math.abs(r.amount))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div style={{ marginTop:10, paddingTop:8, borderTop:"1px dashed rgba(200,210,230,0.4)", display:"flex", justifyContent:"space-between" }}>
+              <span style={{ fontSize:11, color:GRAY, fontWeight:600 }}>支出合計</span>
+              <span style={{ fontSize:13, fontWeight:800, color:PINK }}>{fmt(selectedDayRecs.filter(r=>r.type!=="income").reduce((s,r)=>s+r.amount,0))}</span>
+            </div>
+          </div>
+        )}
+        {selectedDay && selectedDayRecs.length === 0 && (
+          <div style={{ marginTop:14, textAlign:"center", color:GRAY, fontSize:12, paddingTop:12, borderTop:"1px solid rgba(200,210,230,0.4)" }}>
+            {month}月{selectedDay}日の記録はありません
+          </div>
+        )}
+      </div>
+
+      {/* ── ウィークリー集計 Card ── */}
+      <div style={{ ...neuCard, padding:"22px 20px 18px" }}>
+        <div style={{ marginBottom:16 }}>
+          <div style={{ fontSize:14, fontWeight:800, color:DARKER, letterSpacing:"-0.2px" }}>週次集計</div>
+          <div style={{ fontSize:10, color:GRAY, fontWeight:600, letterSpacing:"0.5px", marginTop:2 }}>WEEKLY SUMMARY</div>
+        </div>
+        <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+          {weeks.map(w=>(
+            <div key={w.num} style={{
+              borderRadius:16, padding:"14px 16px",
+              background:"linear-gradient(135deg,#F8F6FF,#F0F8FF)",
+              border:"1px solid rgba(200,210,230,0.5)",
+            }}>
+              <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:10 }}>
+                <div>
+                  <span style={{ fontSize:11, fontWeight:800, color:TEAL2 }}>第{w.num}週</span>
+                  <span style={{ fontSize:10, color:GRAY, marginLeft:6 }}>{month}/{w.start} 〜 {month}/{w.end}</span>
+                </div>
+                <div style={{ textAlign:"right" }}>
+                  {w.income>0 && <div style={{ fontSize:11, color:"#059669", fontWeight:700 }}>+{fmt(w.income)}</div>}
+                  <div style={{ fontSize:13, fontWeight:800, color:PINK }}>−{fmt(w.expense)}</div>
+                </div>
+              </div>
+              {/* 週内カテゴリトップ3 */}
+              {w.cats.length>0 && (
+                <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
+                  {w.cats.map(cat=>(
+                    <div key={cat.id} style={{
+                      display:"flex", alignItems:"center", gap:5,
+                      background:cat.color+"18", borderRadius:99, padding:"4px 10px",
+                    }}>
+                      <Icon3D type={cat.icon||"star"} size={14}/>
+                      <span style={{ fontSize:10, fontWeight:700, color:DARK }}>{cat.name}</span>
+                      <span style={{ fontSize:10, color:cat.color, fontWeight:800 }}>{fmt(cat.amount)}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {/* 週次バー */}
+              {w.expense>0 && (
+                <div style={{ marginTop:10, borderRadius:99, height:5, background:"rgba(200,210,230,0.3)", overflow:"hidden" }}>
+                  <div style={{
+                    height:"100%", borderRadius:99,
+                    background:`linear-gradient(90deg,${PINK}66,${PINK})`,
+                    width:`${Math.min(100,Math.round(w.expense/totalExpense*100))}%`,
+                    transition:"width 0.8s ease",
+                  }}/>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
 
     </div>
@@ -1864,7 +2071,7 @@ export default function App() {
   const [monthKey,   setMonthKey]   = useState(currentMonthKey());
 
   // ── カテゴリバージョン：変更時にlocalStorageを強制リセット ──────────
-  const CATEGORY_VERSION = "v4"; // categories updated
+  const CATEGORY_VERSION = "v5"; // categories updated
  // ← カテゴリ変更のたびに番号を上げる
   const storedVersion = (() => { try { return localStorage.getItem("kakeibo_cat_version"); } catch { return null; } })();
   if (storedVersion !== CATEGORY_VERSION) {
@@ -1900,10 +2107,10 @@ export default function App() {
   const deleteRecord = useCallback(id=>setRecords(p=>p.filter(r=>r.id!==id)),[]);
 
   const tabs = [
-    { id:"input",    label:"入力",    icon:<Icon3D type="pencil" size={28}/> },
-    { id:"report",   label:"レポート",icon:<Icon3D type="chart"  size={28}/> },
-    { id:"history",  label:"履歴",    icon:<Icon3D type="list"   size={28}/> },
-    { id:"settings", label:"設定",    icon:<Icon3D type="gear"   size={28}/> },
+    { id:"input",    label:"入力",    icon:<Icon3D type="pencil" size={22}/> },
+    { id:"report",   label:"レポート",icon:<Icon3D type="chart"  size={22}/> },
+    { id:"history",  label:"履歴",    icon:<Icon3D type="list"   size={22}/> },
+    { id:"settings", label:"設定",    icon:<Icon3D type="gear"   size={22}/> },
   ];
 
   return (
@@ -1943,25 +2150,25 @@ export default function App() {
       {/* Bottom nav — frosted glass */}
       <div style={{
         position:"fixed", bottom:0, left:0, right:0, zIndex:100,
-        background:"rgba(240,242,250,0.85)",
+        background:"rgba(240,242,250,0.88)",
         backdropFilter:"blur(24px) saturate(1.6)",
         WebkitBackdropFilter:"blur(24px) saturate(1.6)",
         borderTop:"1px solid rgba(255,255,255,0.95)",
-        borderRadius:"24px 24px 0 0",
-        padding:"12px 8px 24px",
+        borderRadius:"18px 18px 0 0",
+        padding:"8px 4px 16px",
         display:"flex", justifyContent:"space-around",
         boxShadow:"0 -4px 24px rgba(180,190,220,0.35)",
       }}>
         {tabs.map(({id,label,icon})=>{
           const active=tab===id;
           return (
-            <button key={id} onClick={()=>setTab(id)} style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:4, background:"none", border:"none", cursor:"pointer", padding:"6px 14px", fontFamily:FONT }}>
+            <button key={id} onClick={()=>setTab(id)} style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:2, background:"none", border:"none", cursor:"pointer", padding:"4px 12px", fontFamily:FONT }}>
               <div style={{
-                width:54, height:54, borderRadius:18,
+                width:44, height:44, borderRadius:14,
                 display:"flex", alignItems:"center", justifyContent:"center",
                 background: active ? WHITE : "rgba(255,255,255,0.6)",
                 border: active ? `1.5px solid rgba(45,212,191,0.5)` : "1px solid rgba(200,210,230,0.6)",
-                boxShadow: active ? neuShadow(4) : "none",
+                boxShadow: active ? neuShadow(3) : "none",
                 transition:"all 0.22s ease",
               }}>
                 {icon}

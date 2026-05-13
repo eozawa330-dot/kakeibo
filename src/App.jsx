@@ -787,6 +787,57 @@ const Icon3D = ({ type = "star", size = 32 }) => {
   return map[type] || map["star"];
 };
 
+// ─── Category English Names (for receipt) ────────────────────────────────────
+const CAT_EN = {
+  "給与":"SALARY","賞与":"BONUS","控除":"DEDUCTION","ふるさと納税":"HOMETOWN TAX",
+  "家賃":"RENT","電気":"ELECTRICITY","ガス":"GAS","水道":"WATER",
+  "携帯":"MOBILE","Wi-Fi":"WI-FI","NISA":"NISA INVESTMENT","サブスク":"SUBSCRIPTION",
+  "年金":"PENSION","健康保険":"HEALTH INS.",
+  "食費":"FOOD EXPENSES","外食":"DINING OUT","日用品":"DAILY GOODS","衣服":"CLOTHING",
+  "交通費":"TRANSPORT","医療費":"MEDICAL","カーシェア":"CAR SHARE",
+  "美容":"BEAUTY","趣味":"HOBBIES",
+};
+// ─── Category English Names (for receipt) ────────────────────────────────────
+const CAT_EN = {
+  "給与":"SALARY","賞与":"BONUS","控除":"DEDUCTION","ふるさと納税":"HOMETOWN TAX",
+  "家賃":"RENT","電気":"ELECTRICITY","ガス":"GAS","水道":"WATER",
+  "携帯":"MOBILE","Wi-Fi":"WI-FI","NISA":"NISA INVESTMENT","サブスク":"SUBSCRIPTION",
+  "年金":"PENSION","健康保険":"HEALTH INS.",
+  "食費":"FOOD EXPENSES","外食":"DINING OUT","日用品":"DAILY GOODS","衣服":"CLOTHING",
+  "交通費":"TRANSPORT","医療費":"MEDICAL","カーシェア":"CAR SHARE",
+  "美容":"BEAUTY","趣味":"HOBBIES",
+};
+const getCatEn = name => CAT_EN[name] || name.toUpperCase();
+
+// ─── Landscape photos (Unsplash static URLs) ──────────────────────────────────
+// 環境判定: Vercel本番 → Unsplash実写、それ以外 → CSSグラデーション
+const IS_PROD = typeof window !== "undefined" &&
+  (window.location.hostname.includes("vercel.app") ||
+   window.location.hostname.includes("kakeibo") ||
+   (!window.location.hostname.includes("localhost") && window.location.hostname !== ""));
+
+const LANDSCAPES_PHOTO = [
+  "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80", // mountain lake
+  "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80", // beach sunset
+  "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=80", // aerial forest
+  "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80", // mountain fog
+  "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&q=80", // misty valley
+  "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80", // stars mountain
+  "https://images.unsplash.com/photo-1490682143684-14369e18dce8?w=800&q=80", // calm ocean
+  "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&q=80", // lavender field
+];
+const LANDSCAPES_GRAD = [
+  "linear-gradient(160deg, #1a1a2e 0%, #16213e 30%, #2d6a9f 55%, #4fc3f7 75%, #b3e5fc 90%, #e1f5fe 100%)",
+  "linear-gradient(170deg, #ff9a9e 0%, #fad0c4 25%, #ffecd2 45%, #a1c4fd 70%, #c2e9fb 100%)",
+  "linear-gradient(150deg, #134e5e 0%, #2e8b57 30%, #71b07e 55%, #a8d8a8 75%, #d4edda 100%)",
+  "linear-gradient(165deg, #2c3e50 0%, #3498db 35%, #85c1e9 60%, #d6eaf8 80%, #f0f4f8 100%)",
+  "linear-gradient(155deg, #2d1b69 0%, #7b2d8b 25%, #c56cd6 50%, #e8b4e8 70%, #fce4ec 100%)",
+  "linear-gradient(170deg, #0a0a1a 0%, #1a1a3e 25%, #2d2d6e 45%, #4a4a9e 65%, #8585c8 85%, #b0b0e0 100%)",
+  "linear-gradient(160deg, #006994 0%, #0099cc 28%, #33b5e5 50%, #7fd8e8 70%, #b2ebf2 88%, #e0f7fa 100%)",
+  "linear-gradient(165deg, #e65c00 0%, #f9d423 25%, #f7971e 45%, #ffd200 65%, #fff176 80%, #fffff0 100%)",
+];
+const LANDSCAPES = IS_PROD ? LANDSCAPES_PHOTO : LANDSCAPES_GRAD;
+
 // ─── Icon Picker ────────────────────────────────────────────────────────────
 const ICON_LABELS = { coin:"コイン", house:"家", phone:"スマホ", food:"食事", star:"スター", wallet:"財布", pencil:"鉛筆", chart:"グラフ", list:"リスト", gear:"歯車", car:"車", heart:"ハート", book:"本", plane:"旅行", shop:"買物", music:"音楽", gym:"ジム", pet:"ペット", beauty:"美容", gift:"ギフト", water:"水道", electric:"電気", gas:"ガス", subscription:"サブスク", carshare:"カーシェア", hobby:"趣味", cafe:"カフェ", baby:"育児", medicine:"医薬", camera:"カメラ", diamond:"ジュエリー", fire:"ガス", flower:"花", rice:"食材", sake:"お酒", sports:"スポーツ", train:"電車", umbrella:"保険", yoga:"ヨガ", wifi:"Wi-Fi", hospital:"病院", nisa:"NISA", fork:"食費", basket:"日用品", medal:"賞与", memo:"控除", tshirt:"衣服", herb:"趣味" };
 
@@ -1812,46 +1863,6 @@ export default function App() {
 
   // ── カテゴリバージョン：変更時にlocalStorageを強制リセット ──────────
   const CATEGORY_VERSION = "v4"; // categories updated
-// ─── Category English Names (for receipt) ────────────────────────────────────
-const CAT_EN = {
-  "給与":"SALARY","賞与":"BONUS","控除":"DEDUCTION","ふるさと納税":"HOMETOWN TAX",
-  "家賃":"RENT","電気":"ELECTRICITY","ガス":"GAS","水道":"WATER",
-  "携帯":"MOBILE","Wi-Fi":"WI-FI","NISA":"NISA INVESTMENT","サブスク":"SUBSCRIPTION",
-  "年金":"PENSION","健康保険":"HEALTH INS.",
-  "食費":"FOOD EXPENSES","外食":"DINING OUT","日用品":"DAILY GOODS","衣服":"CLOTHING",
-  "交通費":"TRANSPORT","医療費":"MEDICAL","カーシェア":"CAR SHARE",
-  "美容":"BEAUTY","趣味":"HOBBIES",
-};
-const getCatEn = name => CAT_EN[name] || name.toUpperCase();
-
-// ─── Landscape photos (Unsplash static URLs) ──────────────────────────────────
-// 環境判定: Vercel本番 → Unsplash実写、それ以外 → CSSグラデーション
-const IS_PROD = typeof window !== "undefined" &&
-  (window.location.hostname.includes("vercel.app") ||
-   window.location.hostname.includes("kakeibo") ||
-   (!window.location.hostname.includes("localhost") && window.location.hostname !== ""));
-
-const LANDSCAPES_PHOTO = [
-  "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80", // mountain lake
-  "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80", // beach sunset
-  "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=80", // aerial forest
-  "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80", // mountain fog
-  "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&q=80", // misty valley
-  "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80", // stars mountain
-  "https://images.unsplash.com/photo-1490682143684-14369e18dce8?w=800&q=80", // calm ocean
-  "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&q=80", // lavender field
-];
-const LANDSCAPES_GRAD = [
-  "linear-gradient(160deg, #1a1a2e 0%, #16213e 30%, #2d6a9f 55%, #4fc3f7 75%, #b3e5fc 90%, #e1f5fe 100%)",
-  "linear-gradient(170deg, #ff9a9e 0%, #fad0c4 25%, #ffecd2 45%, #a1c4fd 70%, #c2e9fb 100%)",
-  "linear-gradient(150deg, #134e5e 0%, #2e8b57 30%, #71b07e 55%, #a8d8a8 75%, #d4edda 100%)",
-  "linear-gradient(165deg, #2c3e50 0%, #3498db 35%, #85c1e9 60%, #d6eaf8 80%, #f0f4f8 100%)",
-  "linear-gradient(155deg, #2d1b69 0%, #7b2d8b 25%, #c56cd6 50%, #e8b4e8 70%, #fce4ec 100%)",
-  "linear-gradient(170deg, #0a0a1a 0%, #1a1a3e 25%, #2d2d6e 45%, #4a4a9e 65%, #8585c8 85%, #b0b0e0 100%)",
-  "linear-gradient(160deg, #006994 0%, #0099cc 28%, #33b5e5 50%, #7fd8e8 70%, #b2ebf2 88%, #e0f7fa 100%)",
-  "linear-gradient(165deg, #e65c00 0%, #f9d423 25%, #f7971e 45%, #ffd200 65%, #fff176 80%, #fffff0 100%)",
-];
-const LANDSCAPES = IS_PROD ? LANDSCAPES_PHOTO : LANDSCAPES_GRAD;
  // ← カテゴリ変更のたびに番号を上げる
   const storedVersion = (() => { try { return localStorage.getItem("kakeibo_cat_version"); } catch { return null; } })();
   if (storedVersion !== CATEGORY_VERSION) {

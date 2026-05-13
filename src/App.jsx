@@ -88,7 +88,7 @@ const blobStyle = (top, left, size, color, opacity=0.22) => ({
 });
 
 // ─── 3D SVG Icons (18 types) ───────────────────────────────────────────────
-const ICON_KEYS = ["coin","house","phone","food","star","wallet","pencil","chart","list","gear","car","heart","book","plane","shop","music","gym","pet","beauty","gift","water","electric","gas","subscription","carshare","hobby","cafe","baby","medicine","camera","diamond","fire","flower","rice","sake","sports","train","umbrella","yoga"];
+const ICON_KEYS = ["coin","house","phone","food","star","wallet","pencil","chart","list","gear","car","heart","book","plane","shop","music","gym","pet","beauty","gift","water","electric","gas","subscription","carshare","hobby","cafe","baby","medicine","camera","diamond","fire","flower","rice","sake","sports","train","umbrella","yoga","wifi","hospital","nisa","fork","basket","medal","memo","tshirt","herb"];
 
 const Icon3D = ({ type = "star", size = 32 }) => {
   const s = size;
@@ -647,12 +647,148 @@ const Icon3D = ({ type = "star", size = 32 }) => {
         <circle cx="24" cy="8" r="3" fill="white" opacity="0.4"/>
       </svg>
     ),
+    wifi: (
+      <svg width={s} height={s} viewBox="0 0 48 48" fill="none">
+        <defs>
+          <linearGradient id="iwifi1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#BAE6FD"/><stop offset="100%" stopColor="#0284C7"/></linearGradient>
+          <filter id="fwifi"><feDropShadow dx="0" dy="3" stdDeviation="2.5" floodColor="#0284C7" floodOpacity="0.32"/></filter>
+        </defs>
+        <g filter="url(#fwifi)">
+          <path d="M8 20 Q24 8 40 20" stroke="url(#iwifi1)" strokeWidth="4" fill="none" strokeLinecap="round"/>
+          <path d="M13 26 Q24 17 35 26" stroke="url(#iwifi1)" strokeWidth="4" fill="none" strokeLinecap="round"/>
+          <path d="M18 32 Q24 26 30 32" stroke="url(#iwifi1)" strokeWidth="4" fill="none" strokeLinecap="round"/>
+        </g>
+        <circle cx="24" cy="38" r="4" fill="url(#iwifi1)"/>
+        <circle cx="24" cy="38" r="2" fill="white" opacity="0.6"/>
+      </svg>
+    ),
+    hospital: (
+      <svg width={s} height={s} viewBox="0 0 48 48" fill="none">
+        <defs>
+          <linearGradient id="ihosp1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#FCA5A5"/><stop offset="100%" stopColor="#DC2626"/></linearGradient>
+          <filter id="fhosp"><feDropShadow dx="0" dy="3" stdDeviation="2.5" floodColor="#DC2626" floodOpacity="0.28"/></filter>
+        </defs>
+        <g filter="url(#fhosp)">
+          <rect x="8" y="10" width="32" height="34" rx="5" fill="white" opacity="0.9"/>
+          <rect x="8" y="10" width="32" height="12" rx="5" fill="url(#ihosp1)"/>
+          <rect x="21" y="22" width="6" height="16" rx="2" fill="url(#ihosp1)"/>
+          <rect x="16" y="27" width="16" height="6" rx="2" fill="url(#ihosp1)"/>
+        </g>
+        <rect x="18" y="4" width="12" height="8" rx="3" fill="url(#ihosp1)" opacity="0.7"/>
+      </svg>
+    ),
+    nisa: (
+      <svg width={s} height={s} viewBox="0 0 48 48" fill="none">
+        <defs>
+          <linearGradient id="inisa1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#6EE7B7"/><stop offset="100%" stopColor="#059669"/></linearGradient>
+          <filter id="fnisa"><feDropShadow dx="0" dy="3" stdDeviation="2.5" floodColor="#059669" floodOpacity="0.3"/></filter>
+        </defs>
+        <g filter="url(#fnisa)">
+          <polyline points="6,36 16,22 24,28 34,14 42,20" stroke="url(#inisa1)" strokeWidth="4" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+        </g>
+        <circle cx="42" cy="20" r="5" fill="url(#inisa1)"/>
+        <circle cx="42" cy="20" r="2.5" fill="white" opacity="0.7"/>
+        <circle cx="34" cy="14" r="4" fill="url(#inisa1)" opacity="0.7"/>
+        <circle cx="24" cy="28" r="3.5" fill="url(#inisa1)" opacity="0.6"/>
+        <circle cx="16" cy="22" r="3.5" fill="url(#inisa1)" opacity="0.6"/>
+      </svg>
+    ),
+    fork: (
+      <svg width={s} height={s} viewBox="0 0 48 48" fill="none">
+        <defs>
+          <linearGradient id="ifork1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#FDE68A"/><stop offset="100%" stopColor="#EA580C"/></linearGradient>
+          <filter id="ffork"><feDropShadow dx="0" dy="3" stdDeviation="2.5" floodColor="#EA580C" floodOpacity="0.28"/></filter>
+        </defs>
+        <g filter="url(#ffork)">
+          <rect x="21" y="4" width="4" height="40" rx="2" fill="url(#ifork1)"/>
+          <rect x="13" y="4" width="3" height="18" rx="1.5" fill="url(#ifork1)" opacity="0.8"/>
+          <rect x="32" y="4" width="3" height="18" rx="1.5" fill="url(#ifork1)" opacity="0.8"/>
+          <path d="M13 22 Q23 28 35 22" stroke="url(#ifork1)" strokeWidth="3" fill="none" strokeLinecap="round"/>
+        </g>
+      </svg>
+    ),
+    basket: (
+      <svg width={s} height={s} viewBox="0 0 48 48" fill="none">
+        <defs>
+          <linearGradient id="ibasket1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#FDE68A"/><stop offset="100%" stopColor="#D97706"/></linearGradient>
+          <filter id="fbasket"><feDropShadow dx="0" dy="3" stdDeviation="2.5" floodColor="#D97706" floodOpacity="0.28"/></filter>
+        </defs>
+        <g filter="url(#fbasket)">
+          <path d="M8 22 H40 L36 40 H12 Z" fill="url(#ibasket1)"/>
+          <path d="M8 22 H40 L40 28 H8 Z" fill="white" opacity="0.2"/>
+          <path d="M16 22 Q16 12 24 10 Q32 12 32 22" stroke="url(#ibasket1)" strokeWidth="3.5" fill="none" strokeLinecap="round"/>
+        </g>
+        <rect x="17" y="28" width="3" height="10" rx="1.5" fill="white" opacity="0.5"/>
+        <rect x="24" y="28" width="3" height="10" rx="1.5" fill="white" opacity="0.5"/>
+        <rect x="31" y="28" width="3" height="10" rx="1.5" fill="white" opacity="0.5"/>
+      </svg>
+    ),
+    medal: (
+      <svg width={s} height={s} viewBox="0 0 48 48" fill="none">
+        <defs>
+          <linearGradient id="imedal1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#FDE68A"/><stop offset="100%" stopColor="#B45309"/></linearGradient>
+          <linearGradient id="imedal2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#C4B5FD"/><stop offset="100%" stopColor="#7C3AED"/></linearGradient>
+          <filter id="fmedal"><feDropShadow dx="0" dy="3" stdDeviation="3" floodColor="#B45309" floodOpacity="0.35"/></filter>
+        </defs>
+        <g filter="url(#fmedal)">
+          <polygon points="24,4 28,14 38,14 30,20 33,30 24,24 15,30 18,20 10,14 20,14" fill="url(#imedal1)"/>
+        </g>
+        <polygon points="24,4 28,14 38,14" fill="white" opacity="0.25"/>
+        <circle cx="24" cy="18" r="5" fill="white" opacity="0.5"/>
+        <rect x="18" y="30" width="6" height="14" rx="1" fill="url(#imedal2)" opacity="0.8"/>
+        <rect x="24" y="30" width="6" height="14" rx="1" fill="url(#imedal1)" opacity="0.8"/>
+      </svg>
+    ),
+    memo: (
+      <svg width={s} height={s} viewBox="0 0 48 48" fill="none">
+        <defs>
+          <linearGradient id="imemo1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#94A3B8"/><stop offset="100%" stopColor="#475569"/></linearGradient>
+          <filter id="fmemo"><feDropShadow dx="0" dy="3" stdDeviation="2.5" floodColor="#475569" floodOpacity="0.28"/></filter>
+        </defs>
+        <g filter="url(#fmemo)">
+          <rect x="8" y="6" width="32" height="38" rx="5" fill="white" opacity="0.92"/>
+          <rect x="8" y="6" width="32" height="10" rx="5" fill="url(#imemo1)"/>
+        </g>
+        <rect x="14" y="22" width="20" height="2.5" rx="1.2" fill="url(#imemo1)" opacity="0.5"/>
+        <rect x="14" y="28" width="14" height="2.5" rx="1.2" fill="url(#imemo1)" opacity="0.4"/>
+        <rect x="14" y="34" width="17" height="2.5" rx="1.2" fill="url(#imemo1)" opacity="0.35"/>
+        <circle cx="24" cy="6" r="3" fill="url(#imemo1)" opacity="0.6"/>
+      </svg>
+    ),
+    tshirt: (
+      <svg width={s} height={s} viewBox="0 0 48 48" fill="none">
+        <defs>
+          <linearGradient id="itshirt1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#F9A8D4"/><stop offset="100%" stopColor="#BE185D"/></linearGradient>
+          <filter id="ftshirt"><feDropShadow dx="0" dy="3" stdDeviation="2.5" floodColor="#BE185D" floodOpacity="0.28"/></filter>
+        </defs>
+        <g filter="url(#ftshirt)">
+          <path d="M16 6 L6 16 L14 20 L14 42 H34 L34 20 L42 16 L32 6 Q28 12 24 12 Q20 12 16 6Z" fill="url(#itshirt1)"/>
+          <path d="M16 6 L6 16 L14 20 L14 12Z" fill="white" opacity="0.18"/>
+        </g>
+        <ellipse cx="24" cy="10" rx="8" ry="4" fill="white" opacity="0.22"/>
+      </svg>
+    ),
+    herb: (
+      <svg width={s} height={s} viewBox="0 0 48 48" fill="none">
+        <defs>
+          <linearGradient id="iherb1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#6EE7B7"/><stop offset="100%" stopColor="#065F46"/></linearGradient>
+          <filter id="fherb"><feDropShadow dx="0" dy="3" stdDeviation="2.5" floodColor="#065F46" floodOpacity="0.28"/></filter>
+        </defs>
+        <g filter="url(#fherb)">
+          <ellipse cx="18" cy="18" rx="10" ry="13" fill="url(#iherb1)" transform="rotate(-20 18 18)"/>
+          <ellipse cx="30" cy="18" rx="10" ry="13" fill="url(#iherb1)" transform="rotate(20 30 18)" opacity="0.85"/>
+          <ellipse cx="24" cy="14" rx="8" ry="11" fill="url(#iherb1)" opacity="0.7"/>
+        </g>
+        <rect x="22" y="28" width="4" height="14" rx="2" fill="#047857"/>
+        <ellipse cx="18" cy="18" rx="5" ry="7" fill="white" opacity="0.18" transform="rotate(-20 18 18)"/>
+      </svg>
+    ),
   };
   return map[type] || map["star"];
 };
 
 // ─── Icon Picker ────────────────────────────────────────────────────────────
-const ICON_LABELS = { coin:"コイン", house:"家", phone:"スマホ", food:"食事", star:"スター", wallet:"財布", pencil:"鉛筆", chart:"グラフ", list:"リスト", gear:"歯車", car:"車", heart:"ハート", book:"本", plane:"旅行", shop:"買物", music:"音楽", gym:"ジム", pet:"ペット", beauty:"美容", gift:"ギフト", water:"水道", electric:"電気", gas:"ガス", subscription:"サブスク", carshare:"カーシェア", hobby:"趣味", cafe:"カフェ", baby:"育児", medicine:"医薬", camera:"カメラ", diamond:"ジュエリー", fire:"光熱", flower:"花", rice:"食材", sake:"お酒", sports:"スポーツ", train:"電車", umbrella:"保険", yoga:"ヨガ" };
+const ICON_LABELS = { coin:"コイン", house:"家", phone:"スマホ", food:"食事", star:"スター", wallet:"財布", pencil:"鉛筆", chart:"グラフ", list:"リスト", gear:"歯車", car:"車", heart:"ハート", book:"本", plane:"旅行", shop:"買物", music:"音楽", gym:"ジム", pet:"ペット", beauty:"美容", gift:"ギフト", water:"水道", electric:"電気", gas:"ガス", subscription:"サブスク", carshare:"カーシェア", hobby:"趣味", cafe:"カフェ", baby:"育児", medicine:"医薬", camera:"カメラ", diamond:"ジュエリー", fire:"ガス", flower:"花", rice:"食材", sake:"お酒", sports:"スポーツ", train:"電車", umbrella:"保険", yoga:"ヨガ", wifi:"Wi-Fi", hospital:"病院", nisa:"NISA", fork:"食費", basket:"日用品", medal:"賞与", memo:"控除", tshirt:"衣服", herb:"趣味" };
 
 function IconPicker({ value, onChange }) {
   return (
@@ -677,29 +813,33 @@ function IconPicker({ value, onChange }) {
 // ─── Data ───────────────────────────────────────────────────────────────────
 const DEFAULT_CATEGORIES = {
   income: [
-    { id:"inc_1", name:"給与",   icon:"coin",   color:"#10B981" },
-    { id:"inc_3", name:"その他", icon:"wallet", color:"#60A5FA" },
+    { id:"inc_1", name:"給与",         icon:"coin",    color:"#10B981", subtractFromIncome:false },
+    { id:"inc_2", name:"賞与",         icon:"medal",   color:"#F59E0B", subtractFromIncome:false },
+    { id:"inc_3", name:"控除",         icon:"memo",    color:"#94A3B8", subtractFromIncome:true  },
+    { id:"inc_4", name:"ふるさと納税", icon:"gift",    color:"#E879A0", subtractFromIncome:true  },
   ],
   fixed: [
     { id:"fix_1", name:"家賃",     icon:"house",        color:"#E879A0" },
-    { id:"fix_2", name:"通信費",   icon:"phone",        color:"#3B82F6" },
-    { id:"fix_e", name:"電気代",   icon:"electric",     color:"#F59E0B" },
-    { id:"fix_w", name:"水道代",   icon:"water",        color:"#38BDF8" },
-    { id:"fix_g", name:"ガス代",   icon:"gas",          color:"#FB923C" },
-    { id:"fix_4", name:"保険",     icon:"umbrella",     color:"#10B981" },
-    { id:"fix_5", name:"サブスク", icon:"subscription", color:"#8B5CF6" },
-    { id:"fix_6", name:"年金",     icon:"coin",         color:"#F472B6" },
-    { id:"fix_7", name:"健康保険", icon:"heart",        color:"#34D399" },
+    { id:"fix_2", name:"電気",     icon:"electric",     color:"#F59E0B" },
+    { id:"fix_3", name:"ガス",     icon:"fire",         color:"#FB923C" },
+    { id:"fix_4", name:"水道",     icon:"water",        color:"#38BDF8" },
+    { id:"fix_5", name:"携帯",     icon:"phone",        color:"#3B82F6" },
+    { id:"fix_6", name:"Wi-Fi",    icon:"wifi",         color:"#0EA5E9" },
+    { id:"fix_7", name:"NISA",     icon:"nisa",         color:"#10B981" },
+    { id:"fix_8", name:"サブスク", icon:"subscription", color:"#8B5CF6" },
+    { id:"fix_9", name:"年金",     icon:"coin",         color:"#F472B6" },
+    { id:"fix_10",name:"健康保険", icon:"hospital",     color:"#34D399" },
   ],
   variable: [
-    { id:"var_1", name:"食費",     icon:"food",     color:"#F97316" },
-    { id:"var_2", name:"交通費",   icon:"car",      color:"#38BDF8" },
-    { id:"var_3", name:"衣服",     icon:"shop",     color:"#F472B6" },
-    { id:"var_4", name:"医療",     icon:"heart",    color:"#34D399" },
-    { id:"var_5", name:"娯楽",     icon:"music",    color:"#A78BFA" },
-    { id:"var_6", name:"日用品",   icon:"shop",     color:"#FBBF24" },
-    { id:"var_7", name:"カーシェア", icon:"carshare", color:"#2DD4BF" },
-    { id:"var_8", name:"ささみ",   icon:"heart",    color:"#FCA5A5" },
+    { id:"var_1", name:"食費",     icon:"fork",     color:"#F97316" },
+    { id:"var_2", name:"外食",     icon:"food",     color:"#FB923C" },
+    { id:"var_3", name:"日用品",   icon:"basket",   color:"#FBBF24" },
+    { id:"var_4", name:"衣服",     icon:"tshirt",   color:"#F472B6" },
+    { id:"var_5", name:"交通費",   icon:"train",    color:"#38BDF8" },
+    { id:"var_6", name:"医療費",   icon:"hospital", color:"#34D399" },
+    { id:"var_7", name:"カーシェア",icon:"carshare",color:"#2DD4BF" },
+    { id:"var_8", name:"美容",     icon:"beauty",   color:"#E879A0" },
+    { id:"var_9", name:"趣味",     icon:"herb",     color:"#6EE7B7" },
   ],
 };
 
@@ -976,6 +1116,156 @@ function Splash({ onDone }) {
   );
 }
 
+
+// ─── Receipt Modal ────────────────────────────────────────────────────────────
+function ReceiptModal({ record, catName, catIcon, onClose }) {
+  const [bgIdx] = useState(()=>Math.floor(Math.random()*LANDSCAPES.length));
+  const [visible, setVisible] = useState(false);
+  useEffect(()=>{ setTimeout(()=>setVisible(true),30); },[]);
+
+  // Fake barcode from record id
+  const barcodeVal = record.id.replace(/[^0-9]/g,"").slice(0,12).padEnd(12,"0");
+  const dateStr = record.date;
+  const [year,month,day] = dateStr.split("-");
+  const months = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+  const dateLabel = `${parseInt(day)} ${months[parseInt(month)-1]} ${year}`;
+  const receiptNo = "#"+year+month+day+"-"+barcodeVal.slice(0,4);
+  const isIncome = record.type==="income";
+  const titleEn = getCatEn(catName);
+
+  // SVG barcode (simple visual bars)
+  const bars = Array.from({length:52},(_,i)=>{
+    const v = parseInt(barcodeVal[i%12]||"0");
+    return { h: 20+((v*i*7)%22), w: i%5===0?2:1 };
+  });
+
+  return (
+    <div style={{
+      position:"fixed", inset:0, zIndex:2000,
+      display:"flex", alignItems:"center", justifyContent:"center",
+      padding:"20px",
+      background:"rgba(20,20,40,0.55)",
+      backdropFilter:"blur(8px)",
+      WebkitBackdropFilter:"blur(8px)",
+      opacity: visible?1:0,
+      transition:"opacity 0.35s ease",
+    }} onClick={onClose}>
+      <div onClick={e=>e.stopPropagation()} style={{
+        width:"100%", maxWidth:340,
+        borderRadius:28,
+        overflow:"hidden",
+        position:"relative",
+        transform: visible?"scale(1) translateY(0)":"scale(0.88) translateY(30px)",
+        transition:"transform 0.45s cubic-bezier(0.34,1.56,0.64,1)",
+        boxShadow:"0 32px 80px rgba(0,0,0,0.45), 0 2px 8px rgba(255,255,255,0.1)",
+      }}>
+        {/* Background landscape */}
+        <div style={{
+          position:"absolute", inset:0,
+          ...(IS_PROD
+            ? { backgroundImage:`url(${LANDSCAPES[bgIdx]})`, backgroundSize:"cover", backgroundPosition:"center", filter:"brightness(0.82) saturate(1.1)" }
+            : { background:LANDSCAPES[bgIdx] }
+          ),
+        }}/>
+        {/* Glass overlay */}
+        <div style={{
+          position:"absolute", inset:0,
+          background:"linear-gradient(160deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.14) 50%, rgba(255,255,255,0.20) 100%)",
+          backdropFilter:"blur(2px)",
+        }}/>
+
+        {/* Content */}
+        <div style={{ position:"relative", zIndex:1, padding:"36px 28px 28px" }}>
+          {/* Header */}
+          <div style={{ textAlign:"center", marginBottom:28 }}>
+            <div style={{
+              fontSize:38, fontWeight:900, color:WHITE, letterSpacing:"-1px",
+              fontFamily:FONT, lineHeight:1, marginBottom:6,
+              textShadow:"0 2px 20px rgba(0,0,0,0.3)",
+            }}>{titleEn.split(" ")[0]}<span style={{ opacity:0.7 }}>.</span></div>
+            {titleEn.split(" ").length>1 && (
+              <div style={{ fontSize:13, color:"rgba(255,255,255,0.8)", fontWeight:600, letterSpacing:"3px", fontFamily:FONT }}>
+                {titleEn.split(" ").slice(1).join(" ")}
+              </div>
+            )}
+          </div>
+
+          {/* Divider */}
+          <div style={{ borderTop:"1px solid rgba(255,255,255,0.35)", marginBottom:18 }}/>
+
+          {/* Meta row */}
+          <div style={{ display:"flex", justifyContent:"space-between", marginBottom:20 }}>
+            <div>
+              <div style={{ fontSize:8, color:"rgba(255,255,255,0.6)", letterSpacing:"2px", fontWeight:700, marginBottom:3 }}>RECEIPT</div>
+              <div style={{ fontSize:11, color:WHITE, fontWeight:700, fontFamily:FONT }}>{receiptNo}</div>
+            </div>
+            <div style={{ textAlign:"right" }}>
+              <div style={{ fontSize:8, color:"rgba(255,255,255,0.6)", letterSpacing:"2px", fontWeight:700, marginBottom:3 }}>DATE</div>
+              <div style={{ fontSize:11, color:WHITE, fontWeight:700, fontFamily:FONT }}>{dateLabel}</div>
+            </div>
+          </div>
+
+          {/* Item row */}
+          <div style={{ background:"rgba(255,255,255,0.12)", borderRadius:14, padding:"14px 16px", marginBottom:16, border:"1px solid rgba(255,255,255,0.25)" }}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10 }}>
+              <div style={{ fontSize:9, color:"rgba(255,255,255,0.65)", letterSpacing:"2px", fontWeight:700 }}>ITEM</div>
+              <div style={{ fontSize:9, color:"rgba(255,255,255,0.65)", letterSpacing:"2px", fontWeight:700 }}>AMOUNT</div>
+            </div>
+            <div style={{ borderTop:"1px solid rgba(255,255,255,0.2)", paddingTop:10 }}>
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                  <Icon3D type={catIcon||"star"} size={24}/>
+                  <span style={{ fontSize:13, color:WHITE, fontWeight:700, fontFamily:FONT }}>{catName}</span>
+                </div>
+                <span style={{ fontSize:15, color:WHITE, fontWeight:900, fontFamily:FONT, letterSpacing:"-0.5px" }}>
+                  {isIncome?"+":"−"}¥{record.amount.toLocaleString()}
+                </span>
+              </div>
+              {record.memo && (
+                <div style={{ fontSize:10, color:"rgba(255,255,255,0.55)", marginTop:6, fontStyle:"italic" }}>{record.memo}</div>
+              )}
+            </div>
+          </div>
+
+          {/* Total */}
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:20 }}>
+            <span style={{ fontSize:11, color:"rgba(255,255,255,0.7)", fontWeight:700, letterSpacing:"2px" }}>TOTAL</span>
+            <span style={{ fontSize:22, color:WHITE, fontWeight:900, fontFamily:FONT, letterSpacing:"-0.5px" }}>
+              {isIncome?"+":"−"}¥{record.amount.toLocaleString()}
+            </span>
+          </div>
+
+          {/* Divider */}
+          <div style={{ borderTop:"1px dashed rgba(255,255,255,0.3)", marginBottom:20 }}/>
+
+          {/* Barcode */}
+          <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:6 }}>
+            <div style={{ display:"flex", alignItems:"flex-end", gap:"1px", height:44 }}>
+              {bars.map((b,i)=>(
+                <div key={i} style={{
+                  width:b.w, height:b.h,
+                  background:"rgba(255,255,255,0.85)",
+                  borderRadius:1,
+                }}/>
+              ))}
+            </div>
+            <div style={{ fontSize:9, color:"rgba(255,255,255,0.55)", letterSpacing:"3px", fontFamily:FONT }}>KAKEIBO STUDIO</div>
+          </div>
+
+          {/* Close hint */}
+          <div style={{ textAlign:"center", marginTop:20 }}>
+            <button onClick={onClose} style={{
+              background:"rgba(255,255,255,0.2)", border:"1px solid rgba(255,255,255,0.4)",
+              borderRadius:99, padding:"8px 24px", color:WHITE, fontSize:11,
+              fontWeight:700, cursor:"pointer", letterSpacing:"1.5px", fontFamily:FONT,
+              backdropFilter:"blur(8px)",
+            }}>CLOSE</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 // ─── Input Tab ──────────────────────────────────────────────────────────────
 function InputTab({ categories, onAdd }) {
   const [mode, setMode]             = useState("expense");
@@ -984,6 +1274,7 @@ function InputTab({ categories, onAdd }) {
   const [step, setStep]             = useState("category");
   const [memo, setMemo]             = useState("");
   const [toast, setToast]           = useState(null);
+  const [receipt, setReceipt]       = useState(null); // {record, catName, catIcon}
 
   const cats = mode==="income" ? categories.income : expenseType==="fixed" ? categories.fixed : categories.variable;
 
@@ -992,13 +1283,23 @@ function InputTab({ categories, onAdd }) {
   const handleConfirm = amount => {
     const today=new Date();
     const date=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
-    onAdd({ id:"r"+Date.now(), type:mode==="income"?"income":expenseType, categoryId:selectedCat.id, amount, date, memo });
-    showToast(`${selectedCat.name}  ${fmt(amount)} を記録しました`);
+    const newRecord = { id:"r"+Date.now(), type:mode==="income"?"income":expenseType, categoryId:selectedCat.id, amount, date, memo };
+    onAdd(newRecord);
+    // Show receipt modal instead of toast
+    setReceipt({ record:newRecord, catName:selectedCat.name, catIcon:selectedCat.icon||"star" });
     setStep("category"); setSelectedCat(null); setMemo("");
   };
 
   return (
     <div style={{ paddingBottom:110 }}>
+      {receipt && (
+        <ReceiptModal
+          record={receipt.record}
+          catName={receipt.catName}
+          catIcon={receipt.catIcon}
+          onClose={()=>setReceipt(null)}
+        />
+      )}
       {toast && (
         <div style={{ position:"fixed", top:24, left:"50%", transform:"translateX(-50%)", background:"linear-gradient(135deg, rgba(167,139,250,0.95), rgba(45,212,191,0.95))", backdropFilter:"blur(16px)", WebkitBackdropFilter:"blur(16px)", color:DARK, borderRadius:99, padding:"12px 24px", fontSize:14, fontWeight:700, zIndex:999, whiteSpace:"nowrap", boxShadow:neuShadow(8) }}>
           {toast}
@@ -1093,7 +1394,7 @@ function ReportTab({ records, categories, monthKey, onMonthChange }) {
       {/* ── Month Nav ── */}
       <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:22, padding:"0 2px" }}>
         <button onClick={()=>onMonthChange(addMonths(monthKey,-1))} style={{
-          width:42, height:42, borderRadius:14, border:"none", cursor:"pointer",
+          width:42, height:42, borderRadius:14, cursor:"pointer",
           background:GLASS_BG, backdropFilter:"blur(12px)", WebkitBackdropFilter:"blur(12px)",
           border:GLASS_BORDER, fontSize:20, color:DARK, display:"flex", alignItems:"center", justifyContent:"center",
           boxShadow:neuShadow(4),
@@ -1103,7 +1404,7 @@ function ReportTab({ records, categories, monthKey, onMonthChange }) {
           <div style={{ fontSize:10, color:GRAY, letterSpacing:"1.5px", fontWeight:600, marginTop:2 }}>MONTHLY REPORT</div>
         </div>
         <button onClick={()=>!isNow&&onMonthChange(addMonths(monthKey,1))} style={{
-          width:42, height:42, borderRadius:14, border:"none", cursor:isNow?"default":"pointer",
+          width:42, height:42, borderRadius:14, cursor:isNow?"default":"pointer",
           background:GLASS_BG, backdropFilter:"blur(12px)", WebkitBackdropFilter:"blur(12px)",
           border:GLASS_BORDER, fontSize:20, color:isNow?"#CBD5E1":DARK, display:"flex", alignItems:"center", justifyContent:"center",
           boxShadow:neuShadow(4),
@@ -1510,7 +1811,48 @@ export default function App() {
   const [monthKey,   setMonthKey]   = useState(currentMonthKey());
 
   // ── カテゴリバージョン：変更時にlocalStorageを強制リセット ──────────
-  const CATEGORY_VERSION = "v3"; // ← カテゴリ変更のたびに番号を上げる
+  const CATEGORY_VERSION = "v4"; // categories updated
+// ─── Category English Names (for receipt) ────────────────────────────────────
+const CAT_EN = {
+  "給与":"SALARY","賞与":"BONUS","控除":"DEDUCTION","ふるさと納税":"HOMETOWN TAX",
+  "家賃":"RENT","電気":"ELECTRICITY","ガス":"GAS","水道":"WATER",
+  "携帯":"MOBILE","Wi-Fi":"WI-FI","NISA":"NISA INVESTMENT","サブスク":"SUBSCRIPTION",
+  "年金":"PENSION","健康保険":"HEALTH INS.",
+  "食費":"FOOD EXPENSES","外食":"DINING OUT","日用品":"DAILY GOODS","衣服":"CLOTHING",
+  "交通費":"TRANSPORT","医療費":"MEDICAL","カーシェア":"CAR SHARE",
+  "美容":"BEAUTY","趣味":"HOBBIES",
+};
+const getCatEn = name => CAT_EN[name] || name.toUpperCase();
+
+// ─── Landscape photos (Unsplash static URLs) ──────────────────────────────────
+// 環境判定: Vercel本番 → Unsplash実写、それ以外 → CSSグラデーション
+const IS_PROD = typeof window !== "undefined" &&
+  (window.location.hostname.includes("vercel.app") ||
+   window.location.hostname.includes("kakeibo") ||
+   (!window.location.hostname.includes("localhost") && window.location.hostname !== ""));
+
+const LANDSCAPES_PHOTO = [
+  "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80", // mountain lake
+  "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80", // beach sunset
+  "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=80", // aerial forest
+  "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80", // mountain fog
+  "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&q=80", // misty valley
+  "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80", // stars mountain
+  "https://images.unsplash.com/photo-1490682143684-14369e18dce8?w=800&q=80", // calm ocean
+  "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&q=80", // lavender field
+];
+const LANDSCAPES_GRAD = [
+  "linear-gradient(160deg, #1a1a2e 0%, #16213e 30%, #2d6a9f 55%, #4fc3f7 75%, #b3e5fc 90%, #e1f5fe 100%)",
+  "linear-gradient(170deg, #ff9a9e 0%, #fad0c4 25%, #ffecd2 45%, #a1c4fd 70%, #c2e9fb 100%)",
+  "linear-gradient(150deg, #134e5e 0%, #2e8b57 30%, #71b07e 55%, #a8d8a8 75%, #d4edda 100%)",
+  "linear-gradient(165deg, #2c3e50 0%, #3498db 35%, #85c1e9 60%, #d6eaf8 80%, #f0f4f8 100%)",
+  "linear-gradient(155deg, #2d1b69 0%, #7b2d8b 25%, #c56cd6 50%, #e8b4e8 70%, #fce4ec 100%)",
+  "linear-gradient(170deg, #0a0a1a 0%, #1a1a3e 25%, #2d2d6e 45%, #4a4a9e 65%, #8585c8 85%, #b0b0e0 100%)",
+  "linear-gradient(160deg, #006994 0%, #0099cc 28%, #33b5e5 50%, #7fd8e8 70%, #b2ebf2 88%, #e0f7fa 100%)",
+  "linear-gradient(165deg, #e65c00 0%, #f9d423 25%, #f7971e 45%, #ffd200 65%, #fff176 80%, #fffff0 100%)",
+];
+const LANDSCAPES = IS_PROD ? LANDSCAPES_PHOTO : LANDSCAPES_GRAD;
+ // ← カテゴリ変更のたびに番号を上げる
   const storedVersion = (() => { try { return localStorage.getItem("kakeibo_cat_version"); } catch { return null; } })();
   if (storedVersion !== CATEGORY_VERSION) {
     try {

@@ -795,7 +795,7 @@ const CAT_EN = {
   "年金":"PENSION","健康保険":"HEALTH INS.",
   "食費":"FOOD EXPENSES","外食":"DINING OUT","日用品":"DAILY GOODS","衣服":"CLOTHING",
   "交通費":"TRANSPORT","医療費":"MEDICAL","カーシェア":"CAR SHARE",
-  "美容":"BEAUTY","趣味":"HOBBIES","ささみ":"Amōre!",
+  "美容":"BEAUTY","趣味":"HOBBIES","えま":"Amōre!","えま(食)":"Emma Food","ゲーム":"GAME","交際":"SOCIAL","バレー":"VOLLEY","教養文化":"CULTURE","デジタル":"DIGITAL","友人":"FRIENDS","特別支出":"SPECIAL","雑収入":"MISC INCOME",
 };
 const getCatEn = name => CAT_EN[name] || name.toUpperCase();
 
@@ -896,7 +896,15 @@ const DEFAULT_CATEGORIES = {
     { id:"var_7", name:"カーシェア",icon:"carshare",color:"#2DD4BF" },
     { id:"var_8", name:"美容",     icon:"beauty",   color:"#E879A0" },
     { id:"var_9", name:"趣味",     icon:"herb",     color:"#6EE7B7" },
-    { id:"var_10",name:"ささみ",   icon:"heart",    color:"#FCA5A5" },
+    { id:"var_10",name:"えま",     icon:"heart",    color:"#FCA5A5" },
+    { id:"var_11",name:"えま(食)", icon:"fork",     color:"#FB923C" },
+    { id:"var_12",name:"ゲーム",   icon:"hobby",    color:"#8B5CF6" },
+    { id:"var_13",name:"交際",     icon:"gift",     color:"#E879A0" },
+    { id:"var_14",name:"バレー",   icon:"sports",   color:"#3B82F6" },
+    { id:"var_15",name:"教養文化", icon:"book",     color:"#10B981" },
+    { id:"var_16",name:"デジタル", icon:"subscription", color:"#6366F1" },
+    { id:"var_17",name:"友人",     icon:"heart",    color:"#F472B6" },
+    { id:"var_18",name:"特別支出", icon:"diamond",  color:"#F59E0B" },
   ],
 };
 
@@ -1175,7 +1183,7 @@ function Splash({ onDone }) {
 
 
 // ─── Receipt Modal ────────────────────────────────────────────────────────────
-function ReceiptModal({ record, catName, catIcon, onClose }) {
+function ReceiptModal({ record, catName, catIcon, onClose, customTitle }) {
   const bg = getReceiptBg(catName);
   const [visible, setVisible] = useState(false);
   useEffect(()=>{ setTimeout(()=>setVisible(true),30); },[]);
@@ -1188,7 +1196,7 @@ function ReceiptModal({ record, catName, catIcon, onClose }) {
   const dateLabel = `${parseInt(day)} ${months[parseInt(month)-1]} ${year}`;
   const receiptNo = "#"+year+month+day+"-"+barcodeVal.slice(0,4);
   const isIncome = record.type==="income";
-  const titleEn = getCatEn(catName);
+  const titleEn = customTitle || getCatEn(catName);
 
   // SVG barcode (simple visual bars)
   const bars = Array.from({length:52},(_,i)=>{
@@ -1327,6 +1335,7 @@ function InputTab({ categories, onAdd }) {
   const [selectedCat, setSelectedCat] = useState(null);
   const [step, setStep]             = useState("category");
   const [memo, setMemo]             = useState("");
+  const [customDate, setCustomDate] = useState("");
   const [toast, setToast]           = useState(null);
   const [receipt, setReceipt]       = useState(null); // {record, catName, catIcon}
 
@@ -1336,7 +1345,8 @@ function InputTab({ categories, onAdd }) {
 
   const handleConfirm = amount => {
     const today=new Date();
-    const date=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
+    const todayStr=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
+    const date = customDate || todayStr;
     // 控除・ふるさと納税はsubtractFromIncome=trueなのでマイナス金額で保存
     const allIncomeCats = categories.income;
     const catDef = allIncomeCats.find(ct=>ct.id===selectedCat.id);
@@ -1346,8 +1356,12 @@ function InputTab({ categories, onAdd }) {
     const finalAmount = Math.abs(amount); // 常に正の値で保存
     const newRecord = { id:"r"+Date.now(), type:recordType, categoryId:selectedCat.id, amount:finalAmount, date, memo };
     onAdd(newRecord);
-    setReceipt({ record:newRecord, catName:selectedCat.name, catIcon:selectedCat.icon||"star" });
-    setStep("category"); setSelectedCat(null); setMemo("");
+    const allCats2 = [...categories.income,...categories.fixed,...categories.variable];
+    const catFull = allCats2.find(ct=>ct.id===selectedCat.id);
+    const customTitle = catFull?.receiptTitle || CAT_EN[selectedCat.name] || selectedCat.name.toUpperCase();
+    setReceipt({ record:newRecord, catName:selectedCat.name, catIcon:selectedCat.icon||"star", customTitle });
+    showToast("登録したよん 🎉");
+    setStep("category"); setSelectedCat(null); setMemo(""); setCustomDate("");
   };
 
   return (
@@ -1358,6 +1372,7 @@ function InputTab({ categories, onAdd }) {
           catName={receipt.catName}
           catIcon={receipt.catIcon}
           onClose={()=>setReceipt(null)}
+          customTitle={receipt.customTitle}
         />
       )}
       {toast && (
@@ -1400,8 +1415,26 @@ function InputTab({ categories, onAdd }) {
               <div style={{ fontSize:16, fontWeight:800, color:DARK }}>{selectedCat.name}</div>
             </div>
           </div>
-          <div style={{ ...neuInset(4), borderRadius:12, padding:"1px 4px", marginBottom:4 }}>
-            <input placeholder="メモ（任意）" value={memo} onChange={e=>setMemo(e.target.value)} style={{ width:"100%", padding:"8px 12px", background:"none", border:"none", outline:"none", fontSize:13, color:DARK, fontFamily:FONT, boxSizing:"border-box" }}/>
+          <div style={{ display:"flex", gap:6, marginBottom:4 }}>
+            {/* メモ欄 */}
+            <div style={{ ...neuInset(4), borderRadius:12, padding:"1px 4px", flex:1 }}>
+              <input
+                placeholder="メモをこちらに入力して下さい"
+                value={memo} onChange={e=>setMemo(e.target.value)}
+                style={{ width:"100%", padding:"8px 10px", background:"none", border:"none", outline:"none", fontSize:12, color:DARK, fontFamily:FONT, boxSizing:"border-box" }}
+              />
+            </div>
+            {/* 日付欄 */}
+            <div style={{ ...neuInset(4), borderRadius:12, padding:"1px 4px", position:"relative", display:"flex", alignItems:"center" }}>
+              {!customDate && (
+                <span style={{ position:"absolute", left:10, fontSize:11, color:GRAY_L, pointerEvents:"none", letterSpacing:"0.3px", fontFamily:FONT, whiteSpace:"nowrap" }}>YYYY/MM/DD</span>
+              )}
+              <input
+                type="date"
+                value={customDate} onChange={e=>setCustomDate(e.target.value)}
+                style={{ padding:"8px 8px", background:"none", border:"none", outline:"none", fontSize:12, color:customDate?DARK:"transparent", fontFamily:FONT, cursor:"pointer", width:128 }}
+              />
+            </div>
           </div>
           <Calculator onConfirm={handleConfirm}/>
         </>
@@ -1413,7 +1446,8 @@ function InputTab({ categories, onAdd }) {
 // ─── Report Tab ─────────────────────────────────────────────────────────────
 function ReportTab({ records, categories, monthKey, onMonthChange }) {
   const [selectedDay, setSelectedDay] = useState(null);
-  const [reportView, setReportView]   = useState("overview"); // overview | calendar | weekly
+  const [reportView, setReportView]   = useState("overview");
+  const [expenseTab, setExpenseTab]     = useState("fixed"); // fixed | variable
 
   const allCats = [...categories.income, ...categories.fixed, ...categories.variable];
   const getCat  = id => allCats.find(c => c.id === id) || { name:"不明", icon:"star", color:"#94A3B8" };
@@ -1425,14 +1459,22 @@ function ReportTab({ records, categories, monthKey, onMonthChange }) {
   const savingRate   = totalIncome > 0 ? Math.round(balance / totalIncome * 100) : 0;
   const isNow        = monthKey === currentMonthKey();
 
-  const catMap = {};
-  monthRecs.filter(r => r.type !== "income").forEach(r => {
-    catMap[r.categoryId] = (catMap[r.categoryId] || 0) + r.amount;
-  });
-  const pieData = Object.entries(catMap).map(([id,value]) => {
-    const cat = getCat(id);
-    return { name:cat.name, value, color:cat.color, icon:cat.icon };
-  }).filter(d => d.value > 0).sort((a,b) => b.value - a.value);
+  const makePieData = type => {
+    const map = {};
+    monthRecs.filter(r=>r.type===type).forEach(r=>{
+      map[r.categoryId] = (map[r.categoryId]||0) + r.amount;
+    });
+    return Object.entries(map).map(([id,value])=>{
+      const cat = getCat(id);
+      return { name:cat.name, value, color:cat.color, icon:cat.icon };
+    }).filter(d=>d.value>0).sort((a,b)=>b.value-a.value);
+  };
+  const fixedPieData    = makePieData("fixed");
+  const variablePieData = makePieData("variable");
+  const pieData  = expenseTab==="fixed" ? fixedPieData : variablePieData;
+  const fixedTotal    = monthRecs.filter(r=>r.type==="fixed").reduce((s,r)=>s+r.amount,0);
+  const variableTotal = monthRecs.filter(r=>r.type==="variable").reduce((s,r)=>s+r.amount,0);
+  const pieTotal = expenseTab==="fixed" ? fixedTotal : variableTotal;
 
   const lineData = [];
   for (let i = 5; i >= 0; i--) {
@@ -1607,80 +1649,74 @@ function ReportTab({ records, categories, monthKey, onMonthChange }) {
       </div>
 
       {/* ── 支出内訳 Card ── */}
-      {pieData.length > 0 && (
-        <div style={{ ...neuCard, padding:"22px 20px 18px", marginBottom:16 }}>
-          {/* Section header */}
-          <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:20 }}>
-            <div>
-              <div style={{ fontSize:14, fontWeight:800, color:DARKER, letterSpacing:"-0.2px" }}>支出内訳</div>
-              <div style={{ fontSize:10, color:GRAY, fontWeight:600, letterSpacing:"0.5px", marginTop:2 }}>BREAKDOWN BY CATEGORY</div>
-            </div>
-            <div style={{ textAlign:"right" }}>
-              <div style={{ fontSize:11, color:GRAY, fontWeight:600 }}>合計</div>
-              <div style={{ fontSize:15, fontWeight:900, color:DARKER }}>{fmt(totalExpense)}</div>
-            </div>
+      <div style={{ ...neuCard, padding:"22px 20px 18px", marginBottom:16 }}>
+        {/* ヘッダー */}
+        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:14 }}>
+          <div>
+            <div style={{ fontSize:14, fontWeight:800, color:DARKER, letterSpacing:"-0.2px" }}>支出内訳</div>
+            <div style={{ fontSize:10, color:GRAY, fontWeight:600, letterSpacing:"0.5px", marginTop:2 }}>BREAKDOWN BY CATEGORY</div>
           </div>
+          <div style={{ textAlign:"right" }}>
+            <div style={{ fontSize:11, color:GRAY, fontWeight:600 }}>合計</div>
+            <div style={{ fontSize:15, fontWeight:900, color:DARKER }}>{fmt(pieTotal)}</div>
+          </div>
+        </div>
 
-          {/* Donut — centered, large */}
+        {/* 固定費 / 変動費 タブ */}
+        <div style={{ display:"flex", gap:8, marginBottom:18 }}>
+          {[["fixed","固定費",fixedTotal],["variable","変動費",variableTotal]].map(([v,l,total])=>(
+            <button key={v} onClick={()=>setExpenseTab(v)} style={{
+              flex:1, padding:"8px 0", borderRadius:12, border:"none", cursor:"pointer",
+              fontFamily:FONT, fontSize:12, fontWeight:700,
+              background: expenseTab===v ? NOISE_GRAD : "rgba(255,255,255,0.6)",
+              color: expenseTab===v ? DARKER : GRAY,
+              boxShadow: expenseTab===v ? neuShadow(3) : "none",
+              transition:"all 0.18s ease",
+            }}>
+              {l}
+              <span style={{ fontSize:10, marginLeft:4, opacity:0.7 }}>{fmt(total)}</span>
+            </button>
+          ))}
+        </div>
+
+        {pieData.length > 0 ? (<>
+          {/* Donut */}
           <div style={{ display:"flex", justifyContent:"center", marginBottom:24 }}>
             <div style={{ position:"relative", width:240, height:240, animation:"ringPop 0.6s cubic-bezier(0.34,1.56,0.64,1) both" }}>
-              {/* outer glow ring */}
-              <div style={{
-                position:"absolute", inset:-6, borderRadius:"50%",
-                background:`conic-gradient(${pieData.map((d,i,arr)=>{
-                  const cum = arr.slice(0,i).reduce((s,x)=>s+x.value,0);
-                  const start = Math.round(cum/totalExpense*360);
-                  const end   = Math.round((cum+d.value)/totalExpense*360);
-                  return `${d.color} ${start}deg ${end}deg`;
-                }).join(", ")})`,
-                opacity:0.18, filter:"blur(12px)",
-              }}/>
-              {/* inset bg */}
               <div style={{ position:"absolute", inset:0, borderRadius:"50%", ...neuInset(8) }}/>
               <ResponsiveContainer width={240} height={240}>
                 <PieChart>
                   <Pie data={pieData} cx="50%" cy="50%"
-                    innerRadius={74} outerRadius={110}
-                    dataKey="value" paddingAngle={5}
+                    innerRadius={76} outerRadius={110}
+                    dataKey="value" paddingAngle={2}
                     startAngle={90} endAngle={-270}
-                    cornerRadius={8}
                     strokeWidth={0}
                   >
-                    {pieData.map((d,i) => (
-                      <Cell key={i} fill={d.color}
-                        style={{ filter:`drop-shadow(0 3px 8px ${d.color}66)` }}
-                      />
-                    ))}
+                    {pieData.map((d,i) => <Cell key={i} fill={d.color}/>)}
                   </Pie>
                 </PieChart>
               </ResponsiveContainer>
-              {/* Centre text */}
               <div style={{ position:"absolute", inset:0, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", pointerEvents:"none" }}>
-                <div style={{ fontSize:9, color:GRAY, fontWeight:700, letterSpacing:"1.5px", marginBottom:4 }}>支出合計</div>
+                <div style={{ fontSize:9, color:GRAY, fontWeight:700, letterSpacing:"1.5px", marginBottom:4 }}>
+                  {expenseTab==="fixed"?"固定費":"変動費"}
+                </div>
                 <div style={{ fontSize:24, fontWeight:900, color:DARKER, letterSpacing:"-1px", lineHeight:1, fontVariantNumeric:"tabular-nums" }}>
-                  {fmt(totalExpense).replace("¥","")}
+                  {fmt(pieTotal).replace("¥","")}
                 </div>
                 <div style={{ fontSize:10, color:GRAY, fontWeight:600, marginTop:3 }}>円</div>
               </div>
             </div>
           </div>
 
-          {/* Legend rows — clean horizontal bars */}
+          {/* Legend */}
           <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
             {pieData.map((d,i) => {
-              const pct = totalExpense ? Math.round(d.value/totalExpense*100) : 0;
+              const pct = pieTotal ? Math.round(d.value/pieTotal*100) : 0;
               return (
                 <div key={d.name} style={{ display:"flex", alignItems:"center", gap:10 }}>
-                  {/* Icon badge */}
-                  <div style={{
-                    width:34, height:34, borderRadius:10, flexShrink:0,
-                    background:d.color+"18",
-                    display:"flex", alignItems:"center", justifyContent:"center",
-                    boxShadow:`2px 2px 6px rgba(180,190,220,0.4), -2px -2px 6px rgba(255,255,255,0.9)`,
-                  }}>
+                  <div style={{ width:34, height:34, borderRadius:10, flexShrink:0, background:d.color+"18", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:`2px 2px 6px rgba(180,190,220,0.4),-2px -2px 6px rgba(255,255,255,0.9)` }}>
                     <Icon3D type={d.icon||"star"} size={22}/>
                   </div>
-                  {/* Bar + text */}
                   <div style={{ flex:1, minWidth:0 }}>
                     <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:4 }}>
                       <span style={{ fontSize:12, fontWeight:700, color:DARKER }}>{d.name}</span>
@@ -1690,21 +1726,19 @@ function ReportTab({ records, categories, monthKey, onMonthChange }) {
                       </div>
                     </div>
                     <div style={{ borderRadius:99, height:6, background:"rgba(200,210,230,0.3)", overflow:"hidden" }}>
-                      <div style={{
-                        height:"100%", borderRadius:99,
-                        background:`linear-gradient(90deg, ${d.color}77, ${d.color})`,
-                        width:`${pct}%`,
-                        transition:`width 0.8s cubic-bezier(0.34,1.1,0.64,1) ${i*0.06}s`,
-                        boxShadow:`0 0 6px ${d.color}44`,
-                      }}/>
+                      <div style={{ height:"100%", borderRadius:99, background:`linear-gradient(90deg,${d.color}77,${d.color})`, width:`${pct}%`, transition:`width 0.8s cubic-bezier(0.34,1.1,0.64,1) ${i*0.06}s`, boxShadow:`0 0 6px ${d.color}44` }}/>
                     </div>
                   </div>
                 </div>
               );
             })}
           </div>
-        </div>
-      )}
+        </>) : (
+          <div style={{ textAlign:"center", color:GRAY, padding:"32px 0", fontSize:13 }}>
+            {expenseTab==="fixed"?"固定費":"変動費"}の記録がありません
+          </div>
+        )}
+      </div>
 
       {/* ── 月別推移 Card ── */}
       <div style={{ ...neuCard, padding:"22px 20px 18px", marginBottom:16 }}>
@@ -1961,105 +1995,153 @@ function HistoryTab({ records, categories, monthKey, onDelete }) {
 
 // ─── Settings Tab ────────────────────────────────────────────────────────────
 function SettingsTab({ categories, setCategories }) {
-  const [editingGroup, setEditingGroup] = useState(null);
-  const [editingCat,   setEditingCat]   = useState(null); // {gkey, cat} for icon edit
-  const [newName,      setNewName]      = useState("");
-  const [newIcon,      setNewIcon]      = useState("star");
-  const [selectedColor,setSelectedColor]= useState("#2DD4BF");
-  const COLORS=["#F472B6","#2DD4BF","#34D399","#FBBF24","#A78BFA","#FB923C","#38BDF8","#F87171","#60A5FA","#C084FC","#10B981","#E879A0"];
+  const COLORS = ["#F472B6","#2DD4BF","#34D399","#FBBF24","#A78BFA","#FB923C","#38BDF8","#F87171","#60A5FA","#C084FC","#10B981","#E879A0"];
+  const groups = [{key:"income",label:"収入カテゴリ"},{key:"fixed",label:"固定費カテゴリ"},{key:"variable",label:"変動費カテゴリ"}];
 
-  const groups=[{key:"income",label:"収入カテゴリ"},{key:"fixed",label:"固定費カテゴリ"},{key:"variable",label:"変動費カテゴリ"}];
+  // モーダル state（追加・編集 共通）
+  const [modal, setModal] = useState(null);
+  // modal = { mode:"add"|"edit", gkey, cat? }
+  const [fName,         setFName]         = useState("");
+  const [fReceiptTitle, setFReceiptTitle] = useState("");
+  const [fIcon,         setFIcon]         = useState("star");
+  const [fColor,        setFColor]        = useState("#2DD4BF");
 
-  const addCat = gk => {
-    if(!newName.trim()) return;
-    setCategories(prev=>({...prev,[gk]:[...prev[gk],{id:gk+"_"+Date.now(),name:newName.trim(),icon:newIcon,color:selectedColor}]}));
-    setNewName(""); setEditingGroup(null);
+  const openAdd = gk => {
+    setFName(""); setFReceiptTitle(""); setFIcon("star"); setFColor("#2DD4BF");
+    setModal({ mode:"add", gkey:gk });
   };
-  const deleteCat = (gk,id) => setCategories(prev=>({...prev,[gk]:prev[gk].filter(c=>c.id!==id)}));
-  const updateCatIcon = (gk, id, icon) => {
-    setCategories(prev=>({...prev,[gk]:prev[gk].map(c=>c.id===id?{...c,icon}:c)}));
+  const openEdit = (gk, cat) => {
+    setFName(cat.name||""); setFReceiptTitle(cat.receiptTitle||"");
+    setFIcon(cat.icon||"star"); setFColor(cat.color||"#2DD4BF");
+    setModal({ mode:"edit", gkey:gk, cat });
   };
-  const updateCatColor = (gk, id, color) => {
-    setCategories(prev=>({...prev,[gk]:prev[gk].map(c=>c.id===id?{...c,color}:c)}));
-    // リアルタイムプレビュー：editingCat も更新
-    setEditingCat(prev => prev && prev.cat.id===id ? {...prev, cat:{...prev.cat, color}} : prev);
+  const closeModal = () => setModal(null);
+
+  const handleSave = () => {
+    if (!fName.trim()) return;
+    if (modal.mode === "add") {
+      setCategories(prev=>({...prev,[modal.gkey]:[...prev[modal.gkey],{
+        id:modal.gkey+"_"+Date.now(), name:fName.trim(),
+        icon:fIcon, color:fColor, receiptTitle:fReceiptTitle.trim(),
+      }]}));
+    } else {
+      setCategories(prev=>({...prev,[modal.gkey]:prev[modal.gkey].map(c=>
+        c.id===modal.cat.id ? {...c, name:fName.trim(), icon:fIcon, color:fColor, receiptTitle:fReceiptTitle.trim()} : c
+      )}));
+    }
+    closeModal();
   };
-  const updateCatIconLive = (gk, id, icon) => {
-    setCategories(prev=>({...prev,[gk]:prev[gk].map(c=>c.id===id?{...c,icon}:c)}));
-    setEditingCat(prev => prev && prev.cat.id===id ? {...prev, cat:{...prev.cat, icon}} : prev);
-  };
+  const deleteCat = (gk, id) => setCategories(prev=>({...prev,[gk]:prev[gk].filter(c=>c.id!==id)}));
 
   return (
     <div style={{ paddingBottom:110 }}>
-      {/* Icon edit modal */}
-      {editingCat && (
-        <div style={{ position:"fixed", inset:0, zIndex:500, background:"rgba(230,234,248,0.88)", backdropFilter:"blur(20px)", display:"flex", alignItems:"center", justifyContent:"center", padding:20 }}>
-          <div style={{ ...neuCard, width:"100%", maxWidth:420, padding:"24px 20px" }}>
-            {/* リアルタイムプレビュー */}
-            <div style={{ display:"flex", alignItems:"center", gap:14, marginBottom:18, padding:"14px 16px", borderRadius:16, background:BG2, boxShadow:neuInsetShadow(4) }}>
-              <div style={{ width:56, height:56, borderRadius:18, background:editingCat.cat.color+"22", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:`4px 4px 10px rgba(163,177,198,0.4),-4px -4px 10px rgba(255,255,255,0.9)`, transition:"background 0.2s ease", flexShrink:0 }}>
-                <Icon3D type={editingCat.cat.icon||"star"} size={38}/>
+
+      {/* ── ボトムシートモーダル ── */}
+      {modal && (
+        <div
+          style={{ position:"fixed", inset:0, zIndex:600, background:"rgba(180,190,220,0.55)", backdropFilter:"blur(14px)", WebkitBackdropFilter:"blur(14px)", display:"flex", alignItems:"flex-end" }}
+          onClick={closeModal}
+        >
+          <div onClick={e=>e.stopPropagation()} style={{
+            ...neuCard, width:"100%", borderRadius:"24px 24px 0 0",
+            maxHeight:"85vh", overflowY:"auto",
+            padding:"22px 20px 32px",
+          }}>
+            {/* ヘッダー */}
+            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:16 }}>
+              <div style={{ fontSize:15, fontWeight:800, color:DARKER }}>
+                {modal.mode==="add" ? "カテゴリを追加" : "カテゴリを編集"}
               </div>
-              <div>
-                <div style={{ fontSize:12, fontWeight:800, color:DARKER }}>{editingCat.cat.name}</div>
-                <div style={{ fontSize:11, color:editingCat.cat.color, fontWeight:700, marginTop:2, transition:"color 0.2s" }}>● {editingCat.cat.color}</div>
+              <button onClick={closeModal} style={{ background:"none", border:"none", fontSize:20, color:GRAY, cursor:"pointer", lineHeight:1 }}>×</button>
+            </div>
+
+            {/* プレビュー */}
+            <div style={{ display:"flex", alignItems:"center", gap:12, padding:"12px 14px", borderRadius:16, background:BG2, boxShadow:neuInsetShadow(4), marginBottom:16 }}>
+              <div style={{ width:44, height:44, borderRadius:14, background:fColor+"22", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                <Icon3D type={fIcon} size={30}/>
+              </div>
+              <div style={{ flex:1, minWidth:0 }}>
+                <div style={{ fontSize:13, fontWeight:800, color:DARKER }}>{fName||"カテゴリ名"}</div>
+                <div style={{ fontSize:10, color:fColor, marginTop:2 }}>
+                  {fReceiptTitle||"（レシートタイトル未設定）"}
+                </div>
               </div>
             </div>
+
+            {/* カテゴリ名 */}
+            <div style={{ fontSize:10, color:GRAY, fontWeight:700, letterSpacing:"1.5px", marginBottom:6 }}>カテゴリ名</div>
+            <div style={{ ...neuInset(4), borderRadius:12, marginBottom:14 }}>
+              <input value={fName} onChange={e=>setFName(e.target.value)} placeholder="例：外食、交際費など"
+                style={{ width:"100%", padding:"11px 14px", background:"none", border:"none", outline:"none", fontSize:14, color:DARK, fontFamily:FONT, boxSizing:"border-box" }}/>
+            </div>
+
+            {/* レシートタイトル */}
+            <div style={{ fontSize:10, color:GRAY, fontWeight:700, letterSpacing:"1.5px", marginBottom:4 }}>レシートタイトル（英字）</div>
+            <div style={{ fontSize:10, color:GRAY_L, marginBottom:6 }}>レシート上部に表示される英字。空欄の場合はカテゴリ名が表示されます。</div>
+            <div style={{ ...neuInset(4), borderRadius:12, marginBottom:14 }}>
+              <input value={fReceiptTitle} onChange={e=>setFReceiptTitle(e.target.value.toUpperCase())} placeholder="例：DINING OUT / SOCIAL"
+                style={{ width:"100%", padding:"11px 14px", background:"none", border:"none", outline:"none", fontSize:14, color:DARK, fontFamily:FONT, boxSizing:"border-box", letterSpacing:"0.5px" }}/>
+            </div>
+
+            {/* アイコン */}
             <div style={{ fontSize:10, color:GRAY, fontWeight:700, letterSpacing:"1.5px", marginBottom:10 }}>アイコン</div>
-            <IconPicker value={editingCat.cat.icon} onChange={icon=>updateCatIconLive(editingCat.gkey,editingCat.cat.id,icon)}/>
+            <IconPicker value={fIcon} onChange={setFIcon}/>
+
+            {/* カラー */}
             <div style={{ fontSize:10, color:GRAY, fontWeight:700, letterSpacing:"1.5px", margin:"14px 0 10px" }}>カラー</div>
-            <div style={{ display:"flex", gap:10, flexWrap:"wrap", marginBottom:4 }}>
+            <div style={{ display:"flex", gap:10, flexWrap:"wrap", marginBottom:22 }}>
               {COLORS.map(col=>(
-                <div key={col} onClick={()=>updateCatColor(editingCat.gkey,editingCat.cat.id,col)}
-                  style={{ width:32, height:32, borderRadius:99, background:col, cursor:"pointer",
-                    transform: editingCat.cat.color===col ? "scale(1.25)" : "scale(1)",
-                    boxShadow: editingCat.cat.color===col
-                      ? `0 0 0 3px ${BG}, 0 0 0 5px ${col}, 3px 3px 8px rgba(163,177,198,0.4)`
-                      : neuShadow(2),
-                    transition:"transform 0.15s ease, box-shadow 0.15s ease",
-                  }}/>
+                <div key={col} onClick={()=>setFColor(col)} style={{
+                  width:30, height:30, borderRadius:99, background:col, cursor:"pointer",
+                  transform: fColor===col ? "scale(1.3)" : "scale(1)",
+                  boxShadow: fColor===col ? `0 0 0 3px ${BG}, 0 0 0 5px ${col}` : neuShadow(2),
+                  transition:"transform 0.15s ease",
+                }}/>
               ))}
             </div>
-            <NeuBtn accent onClick={()=>setEditingCat(null)} style={{ width:"100%", textAlign:"center" }}>完了</NeuBtn>
+
+            {/* ボタン */}
+            <div style={{ display:"flex", gap:8 }}>
+              <button onClick={closeModal} style={{
+                flex:1, padding:"14px 0", borderRadius:14,
+                background:BG, border:GLASS_BORDER, color:DARK,
+                fontSize:14, fontWeight:700, cursor:"pointer", fontFamily:FONT,
+                boxShadow:neuShadow(4),
+              }}>キャンセル</button>
+              <button onClick={handleSave} style={{
+                flex:2, padding:"14px 0", borderRadius:14,
+                background:NOISE_GRAD, border:"1px solid rgba(255,255,255,0.8)",
+                color:DARKER, fontSize:14, fontWeight:800,
+                cursor:"pointer", fontFamily:FONT, boxShadow:NOISE_SHADOW,
+              }}>{modal.mode==="add" ? "追加する +" : "保存する ✓"}</button>
+            </div>
           </div>
         </div>
       )}
 
+      {/* ── カテゴリ一覧 ── */}
       {groups.map(({key,label})=>(
         <div key={key} style={{ ...neuCard, marginBottom:16, padding:"20px" }}>
           <div style={{ fontSize:11, fontWeight:700, color:GRAY, marginBottom:14, letterSpacing:"1px" }}>{label}</div>
           <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
-            {categories[key].map(cat=>(
+            {(categories[key]||[]).map(cat=>(
               <div key={cat.id} style={{ display:"flex", alignItems:"center", gap:10 }}>
-                <button onClick={()=>setEditingCat({gkey:key,cat})} style={{ width:42, height:42, borderRadius:13, background:cat.color+"1A", display:"flex", alignItems:"center", justifyContent:"center", border:"none", cursor:"pointer", flexShrink:0, boxShadow:`3px 3px 7px rgba(163,177,198,0.4),-3px -3px 7px rgba(255,255,255,0.9)` }}>
-                  <Icon3D type={cat.icon||"star"} size={28}/>
-                </button>
-                <div style={{ flex:1, fontSize:13, fontWeight:600, color:DARK }}>{cat.name}</div>
-                <div style={{ width:10, height:10, borderRadius:99, background:cat.color, flexShrink:0 }}/>
-                <button onClick={()=>setEditingCat({gkey:key,cat})} style={{ background:BG, border:"none", borderRadius:9, padding:"5px 10px", cursor:"pointer", color:TEAL2, fontSize:11, fontWeight:700, boxShadow:neuShadow(3) }}>編集</button>
+                <div style={{ width:40, height:40, borderRadius:12, background:(cat.color||"#94A3B8")+"1A", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                  <Icon3D type={cat.icon||"star"} size={26}/>
+                </div>
+                <div style={{ flex:1, minWidth:0 }}>
+                  <div style={{ fontSize:13, fontWeight:600, color:DARK }}>{cat.name}</div>
+                  {cat.receiptTitle && <div style={{ fontSize:10, color:GRAY_L, marginTop:1 }}>{cat.receiptTitle}</div>}
+                </div>
+                <div style={{ width:10, height:10, borderRadius:99, background:cat.color||"#94A3B8", flexShrink:0 }}/>
+                <button onClick={()=>openEdit(key,cat)} style={{ background:BG, border:"none", borderRadius:9, padding:"5px 10px", cursor:"pointer", color:TEAL2, fontSize:11, fontWeight:700, boxShadow:neuShadow(3), fontFamily:FONT }}>編集</button>
                 <button onClick={()=>deleteCat(key,cat.id)} style={{ background:BG, border:"none", borderRadius:9, width:28, height:28, cursor:"pointer", color:PINK, fontSize:11, display:"flex", alignItems:"center", justifyContent:"center", boxShadow:neuShadow(3) }}>✕</button>
               </div>
             ))}
           </div>
-
-          {editingGroup===key ? (
-            <div style={{ marginTop:16 }}>
-              <div style={{ fontSize:11, color:GRAY, fontWeight:700, letterSpacing:"1px", marginBottom:10 }}>アイコンを選択</div>
-              <IconPicker value={newIcon} onChange={setNewIcon}/>
-              <div style={{ ...neuInset(4), borderRadius:10, padding:"2px 4px", margin:"12px 0 10px" }}>
-                <input value={newName} onChange={e=>setNewName(e.target.value)} placeholder="カテゴリ名" style={{ width:"100%", padding:"10px 12px", background:"none", border:"none", outline:"none", fontSize:14, color:DARK, fontFamily:FONT, boxSizing:"border-box" }}/>
-              </div>
-              <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginBottom:12 }}>
-                {COLORS.map(c=><div key={c} onClick={()=>setSelectedColor(c)} style={{ width:22,height:22,borderRadius:99,background:c,cursor:"pointer",boxShadow:selectedColor===c?`0 0 0 3px ${BG},0 0 0 5px ${c},${neuShadow(2)}`:neuShadow(2) }}/>)}
-              </div>
-              <div style={{ display:"flex", gap:8 }}>
-                <NeuBtn small onClick={()=>setEditingGroup(null)} style={{ flex:1, textAlign:"center" }}>キャンセル</NeuBtn>
-                <NeuBtn small onClick={()=>addCat(key)} accent style={{ flex:2, textAlign:"center" }}>追加する</NeuBtn>
-              </div>
-            </div>
-          ) : (
-            <button onClick={()=>{setEditingGroup(key);setNewName("");setNewIcon("star");}} style={{ width:"100%", padding:"12px", borderRadius:12, marginTop:14, background:"none", border:`1.5px dashed rgba(148,163,184,0.5)`, cursor:"pointer", color:GRAY, fontSize:13, fontWeight:600, fontFamily:FONT }}>＋ カテゴリを追加</button>
-          )}
+          <button onClick={()=>openAdd(key)} style={{ width:"100%", padding:"12px", borderRadius:12, marginTop:14, background:"none", border:`1.5px dashed rgba(148,163,184,0.5)`, cursor:"pointer", color:GRAY, fontSize:13, fontWeight:600, fontFamily:FONT }}>
+            ＋ カテゴリを追加
+          </button>
         </div>
       ))}
     </div>
@@ -2073,12 +2155,28 @@ export default function App() {
   const [monthKey,   setMonthKey]   = useState(currentMonthKey());
 
   // ── カテゴリバージョン：変更時にlocalStorageを強制リセット ──────────
-  const CATEGORY_VERSION = "v5"; // categories updated
+  const CATEGORY_VERSION = "v8-sasami"; // categories updated
  // ← カテゴリ変更のたびに番号を上げる
+  // ── カテゴリのマージ更新（ユーザーのカスタムを消さずに新カテゴリを追加）──
   const storedVersion = (() => { try { return localStorage.getItem("kakeibo_cat_version"); } catch { return null; } })();
   if (storedVersion !== CATEGORY_VERSION) {
     try {
-      localStorage.removeItem("kakeibo_categories");
+      const savedCats = localStorage.getItem("kakeibo_categories");
+      if (savedCats) {
+        // 既存データにデフォルトの新カテゴリをマージ
+        const existing = JSON.parse(savedCats);
+        const merged = { ...existing };
+        // 各グループ（income/fixed/variable）について
+        ["income","fixed","variable"].forEach(group => {
+          const existingIds = new Set((existing[group]||[]).map(c=>c.id));
+          const newCats = (DEFAULT_CATEGORIES[group]||[]).filter(c=>!existingIds.has(c.id));
+          if (newCats.length > 0) {
+            merged[group] = [...(existing[group]||[]), ...newCats];
+          }
+        });
+        localStorage.setItem("kakeibo_categories", JSON.stringify(merged));
+      }
+      // バージョンだけ更新（データは消さない）
       localStorage.setItem("kakeibo_cat_version", CATEGORY_VERSION);
     } catch {}
   }

@@ -1360,7 +1360,6 @@ function InputTab({ categories, onAdd }) {
     const catFull = allCats2.find(ct=>ct.id===selectedCat.id);
     const customTitle = catFull?.receiptTitle || CAT_EN[selectedCat.name] || selectedCat.name.toUpperCase();
     setReceipt({ record:newRecord, catName:selectedCat.name, catIcon:selectedCat.icon||"star", customTitle });
-    showToast("登録したよん 🎉");
     setStep("category"); setSelectedCat(null); setMemo(""); setCustomDate("");
   };
 
@@ -2026,7 +2025,7 @@ function SettingsTab({ categories, setCategories }) {
       }]}));
     } else {
       setCategories(prev=>({...prev,[modal.gkey]:prev[modal.gkey].map(c=>
-        c.id===modal.cat.id ? {...c, name:fName.trim(), icon:fIcon, color:fColor, receiptTitle:fReceiptTitle.trim()} : c
+        c.id===modal.cat.id ? {...c, name:fName.trim(), icon:fIcon, color:fColor, receiptTitle:fReceiptTitle.trim().toUpperCase()} : c
       )}));
     }
     closeModal();
@@ -2045,7 +2044,7 @@ function SettingsTab({ categories, setCategories }) {
           <div onClick={e=>e.stopPropagation()} style={{
             ...neuCard, width:"100%", borderRadius:"24px 24px 0 0",
             maxHeight:"85vh", overflowY:"auto",
-            padding:"22px 20px 32px",
+            padding:"22px 20px 120px",
           }}>
             {/* ヘッダー */}
             <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:16 }}>
@@ -2079,8 +2078,8 @@ function SettingsTab({ categories, setCategories }) {
             <div style={{ fontSize:10, color:GRAY, fontWeight:700, letterSpacing:"1.5px", marginBottom:4 }}>レシートタイトル（英字）</div>
             <div style={{ fontSize:10, color:GRAY_L, marginBottom:6 }}>レシート上部に表示される英字。空欄の場合はカテゴリ名が表示されます。</div>
             <div style={{ ...neuInset(4), borderRadius:12, marginBottom:14 }}>
-              <input value={fReceiptTitle} onChange={e=>setFReceiptTitle(e.target.value.toUpperCase())} placeholder="例：DINING OUT / SOCIAL"
-                style={{ width:"100%", padding:"11px 14px", background:"none", border:"none", outline:"none", fontSize:14, color:DARK, fontFamily:FONT, boxSizing:"border-box", letterSpacing:"0.5px" }}/>
+              <input value={fReceiptTitle} onChange={e=>setFReceiptTitle(e.target.value)} placeholder="例：DINING OUT / SOCIAL"
+                style={{ width:"100%", padding:"11px 14px", background:"none", border:"none", outline:"none", fontSize:14, color:DARK, fontFamily:FONT, boxSizing:"border-box", letterSpacing:"0.5px", textTransform:"uppercase" }}/>
             </div>
 
             {/* アイコン */}
